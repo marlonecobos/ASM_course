@@ -73,9 +73,15 @@ setwd("YOUR/DIRECTORY")
 
 ### Data required
 
+Data needed to replicate these analyses are:
+
+- Occurrence records properly cleaned and processed to create ENMs.
+- Variables masked to the area where models will be calibrated (M).
+- If you need projections, variables masked to an area of interest and/or representing one or more scenarios of interest.
+
 ### Workflow description
 
-The information required to run this type of simulation is related to  
+Once the data to create ENMs is properly prepared, ecological niche modeling starts with the process of model calibration. During calibration several candidate models are tested under user defined criteria of performance and the best performing model or models are selected to create final models. 
 
 <br>
 
@@ -83,3 +89,175 @@ The information required to run this type of simulation is related to
 
 ### Getting the data
 
+```{r get_data, eval=FALSE}
+# where to get it and where to save it (change "YOUR/DIRECTORY")
+url_data <- "https://github.com/marlonecobos/ASM_course/raw/main/kuenm_practice/Data.zip"
+data_file <- "YOUR/DIRECTORY/Data.zip"
+
+# download data
+download.file(url = url_data, destfile = data_file, mode = "wb",
+              quiet = FALSE)
+
+# files and directory to unzip
+zip_file <- "YOUR/DIRECTORY/Data.zip"
+ex_dir <- "YOUR/DIRECTORY"
+
+# unzipping the data
+unzip(zipfile = zip_file, exdir = ex_dir)
+
+# check what is in your working directory
+dir() 
+```
+
+
+### Final preparations
+
+
+
+```{r fin_prep, eval=FALSE}
+# splitting training and testing records
+help(kuenm_occsplit)
+
+occs <- read.csv("aame.csv")
+
+set.seed(1)
+split <- kuenm_occsplit(occ = occs, train.proportion = 0.7, method = "random",
+                        save = TRUE, name = "occ")
+```
+
+
+
+```{r fin_prep1, eval=FALSE}
+# preparing sets of variables
+help(kuenm_varcomb)
+
+vs <- kuenm_varcomb(var.dir = "Variables", out.dir = "M_variables", min.number = 3, 
+                    in.format = "ascii", out.format = "ascii")
+```
+
+
+### Model calibration
+
+#### Candidate model creation
+
+```{r calibration, eval=FALSE}
+# function documentation and argument definition
+help(kuenm_cal)
+
+oj <- "occ_joint.csv"
+otr <- "occ_train.csv"
+mvars <- "M_variables"
+bcal <- "batch_cal"
+candir <- "Candidate_models"
+regm <- c(0.1, 0.25, 0.5, 1, 2, 4)
+fclas <- c("lq", "lqp", "q")
+mxpath <- "/mnt/backup/Maxent"
+```
+
+
+
+```{r calibration1, eval=FALSE}
+# creating candidate models
+kuenm_cal(occ.joint = oj, occ.tra = otr, M.var.dir = mvars, 
+          batch = bcal, out.dir = candir, max.memory = 1000, 
+          reg.mult = regm, f.clas = fclas, args = NULL, 
+          maxent.path = mxpath, wait = FALSE, run = TRUE)
+```
+
+
+#### Candidate model creation
+
+```{r calibration2, eval=FALSE}
+# function documentation and argument definition
+help(kuenm_ceval)
+
+ote <- "occ_test.csv"
+cresdir <- "Calibration_results"
+criteria <- "OR_AICc"
+threshols <- 5
+rand_sample <- 50
+iterations <- 500
+```
+
+
+
+```{r calibration3, eval=FALSE}
+# candidate model evaluation and selection
+ceval <- kuenm_ceval(path = candir, occ.joint = oj, occ.tra = ote, 
+                     occ.test = ote, batch = bcal, out.eval = cresdir,
+                     threshold = threshold, rand.percent = rand_sample, 
+                     iterations = iterations, selection = criteria)
+```
+
+
+### Final models and projections
+
+```{r fin_models, eval=FALSE}
+# function documentation and argument definition
+help(kuenm_mod)
+
+bfmod <- "batch_model"
+moddir <- "Final_models"
+replicates <- 5
+gvars <- "G_variables"
+rep_type <- "Bootstrap"
+jackknife <- TRUE
+out_format <- "cloglog"
+projection <- TRUE
+ext_type <- "all"
+```
+
+
+```{r fin_models1, eval=FALSE}
+# producing all final models and projections
+kuenm_mod(occ.joint = oj, M.var.dir = mvars, out.eval = cresdir, 
+          batch = bfmod, rep.n = replicates, rep.type = rep_type,
+          jackknife = jackknife, out.dir = moddir, out.format = out_format, 
+          project = projection, G.var.dir = gvars, ext.type = ext_type, 
+          maxent.path = mxpath, args = NULL, wait = FALSE, run = TRUE)
+```
+
+
+### Independent evaluation of final models
+
+```{r ind_eval, eval=FALSE}
+# function documentation and argument definition
+help(kuenm_feval)
+
+oi <- "aame_ind.csv"
+eval_dir <- "F_models_evaluation"
+replicated <- TRUE 
+```
+
+
+```{r ind_eval1, eval=FALSE}
+# evaluation of final models with independent data
+feval <- kuenm_feval(path = moddir, occ.joint = oj, occ.ind = oi, 
+                     replicates = replicated, out.eval = eval_dir,
+                     threshold = threshold, rand.percent = rand_sample, 
+                     iterations = iterations)
+```
+
+
+### Model statistics and consensus
+
+```{r mod_stats, eval=FALSE}
+# function documentation and argument definition
+help(kuenm_modstats)
+
+spname <- "Amblyomma_americanum_all"
+format <- "asc"
+stats <- c("med", "range")
+scenarios <- c("current", "cc_rcp45", "cc_rcp85")
+ext_selected <- "E"
+modstats <- "Final_Model_Stats"
+```
+
+
+```{r mod_stats1, eval=FALSE}
+# model statistic calculations
+kuenm_modstats(sp.name = spname, fmod.dir = moddir, format = format, 
+               project = projection, statistics = stats, 
+               replicated = replicated, proj.scenarios = scenarios, 
+               ext.type = ext_selected, out.dir = modstats)
+```
