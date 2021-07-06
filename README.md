@@ -10,7 +10,7 @@ License: <a href="https://github.com/marlonecobos/ASM_course/blob/main/LICENSE" 
 
 <hr>
 
-This repository contains R scripts and materials to run examples for the course. Example data can be obtained using the scripts presented with detailed comments in *HTML* files.
+This repository contains R scripts and materials to run examples for the course. Example data can be obtained using the scripts presented with detailed comments in guides (*HTML* files).
 
 <hr>
 
