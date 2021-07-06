@@ -211,6 +211,7 @@
       <li><a href="#independent-evaluation-of-final-models">Independent evaluation of final models</a></li>
       <li><a href="#model-statistics-and-consensus">Model statistics and consensus</a></li>
       </ul></li>
+      <li><a href="#references">References</a></li>
       </ul>
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
@@ -227,14 +228,16 @@
 <div id="main">
 <div id="description" class="section level2">
 <h2>Description</h2>
-<p>This script is a guide to.</p>
-<p>The data that we would use can be downloaded following this <strong>link</strong>.</p>
+<p>This script is a guide to use the R package <a href="https://github.com/marlonecobos/kuenm#kuenm-an-r-package-for-detailed-development-of-maxent-ecological-niche-models" target="_blank">kuenm</a> to perform ecological niche modeling (ENM) exercises. The guide is focused on the functions of the package that are directly related to the process of ENM.</p>
+<p>All data to be used can be obtained using the R code presented below. All data and code related to this topic is stored in the GitHub repository <a href="https://github.com/marlonecobos/ASM_course" target="_blank">ASM Course</a>.</p>
+<hr>
 <p><br></p>
 </div>
 <div id="setting-up-r" class="section level2">
 <h2>Setting up R</h2>
 <div id="initial-dependencies" class="section level3">
 <h3>Initial dependencies</h3>
+<p>The package kuenm uses the algorithm of Maxent to create models, therefore, a crucial requirement is to have the maxent.jar application in any user-defined directory (maintaining it in a fixed directory is always a good idea). This software is available in the <a href="https://biodiversityinformatics.amnh.org/open_source/maxent/" target="_blank">Maxent repository</a>. To use Maxent you need to install <a href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html" target="_blank">Java Development Kit</a> (see also, <a href="https://openjdk.java.net/" target="_blank">Open JDK</a>, or <a href="https://aws.amazon.com/corretto/" target="_blank">Amazon Coretto</a>). Finally, kuenm requires compilation tools (i.e., <a href="https://cran.r-project.org/bin/windows/Rtools/" target="_blank">Rtools</a> on Windows, <a href="https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/" target="_blank">Xcode</a> on Mac).</p>
 </div>
 <div id="r-pacakages-needed" class="section level3">
 <h3>R pacakages needed</h3>
@@ -251,9 +254,13 @@
 </div>
 <div id="working-directory" class="section level3">
 <h3>Working directory</h3>
-<p>The simulations will be run using data from a local directory, and results will also be written in the this directory. For these reasons, it is important to define a working directory that suits your needs.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># please change &#39;YOUR/DIRECTORY&#39; as needed</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;YOUR/DIRECTORY&quot;</span>)</span></code></pre></div>
+<p>The analyses with the example data will run using data from a local directory, and results will also be written in the this directory. For these reasons, it is important to define a working directory that suits your needs (creating a new directory may be a good idea).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find current directory</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getwd</span>()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># define new directory, please change &#39;YOUR/DIRECTORY&#39; as needed</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;YOUR/DIRECTORY&quot;</span>)</span></code></pre></div>
+<hr>
 <p><br></p>
 </div>
 </div>
@@ -270,7 +277,8 @@
 </div>
 <div id="workflow-description" class="section level3">
 <h3>Workflow description</h3>
-<p>Once the data to create ENMs is properly prepared, ecological niche modeling starts with the process of model calibration. During calibration several candidate models are tested under user defined criteria of performance and the best performing model or models are selected to create final models.</p>
+<p>Once the data to create ENMs is properly prepared, ecological niche modeling starts with the process of model calibration. During calibration several candidate models are tested under user defined criteria of performance and the best performing model or models are selected. Final models are then created using the parameterizations of selected models. If needed, these models are projected to other scenarios (different areas or times). The workflow ends in the calculation of general statistics of final models obtained with multiple parameterizations (e.g., median and range).</p>
+<hr>
 <p><br></p>
 </div>
 </div>
@@ -278,6 +286,7 @@
 <h2>Example case</h2>
 <div id="getting-the-data" class="section level3">
 <h3>Getting the data</h3>
+<p>The following lines of code help to download and unzip the data that will be used in the example. Change “YOUR/DIRECTORY” as needed.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># where to get it and where to save it (change &#39;YOUR/DIRECTORY&#39;)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>url_data <span class="ot">&lt;-</span> <span class="st">&quot;https://github.com/marlonecobos/ASM_course/raw/main/kuenm_practice/Data.zip&quot;</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>data_file <span class="ot">&lt;-</span> <span class="st">&quot;YOUR/DIRECTORY/Data.zip&quot;</span></span>
@@ -294,108 +303,165 @@
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># check what is in your working directory</span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">dir</span>()</span></code></pre></div>
+<hr>
 </div>
 <div id="final-preparations" class="section level3">
 <h3>Final preparations</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># splitting training and testing records</span></span>
+<p>Before running analysis directly related to the ecological niche modeling process, occurrence records will be split into training and testing records, and variables will be separated into distinct sets.</p>
+<div id="occurrence-split" class="section level4">
+<h4>Occurrence split</h4>
+<p>The code below helps to split the records, the sets of records will be written in the working directory.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_occsplit)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>occs <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;aame.csv&quot;</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">kuenm_occsplit</span>(<span class="at">occ =</span> occs, <span class="at">train.proportion =</span> <span class="fl">0.7</span>, <span class="at">method =</span> <span class="st">&quot;random&quot;</span>, <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;occ&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># preparing sets of variables</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_varcomb)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>vs <span class="ot">&lt;-</span> <span class="fu">kuenm_varcomb</span>(<span class="at">var.dir =</span> <span class="st">&quot;Variables&quot;</span>, <span class="at">out.dir =</span> <span class="st">&quot;M_variables&quot;</span>, <span class="at">min.number =</span> <span class="dv">3</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">in.format =</span> <span class="st">&quot;ascii&quot;</span>, <span class="at">out.format =</span> <span class="st">&quot;ascii&quot;</span>)</span></code></pre></div>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># object and arguments to be used</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>occs <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;aame.csv&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fl">0.7</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>method <span class="ot">&lt;-</span> <span class="st">&quot;random&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>save <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>gname <span class="ot">&lt;-</span> <span class="st">&quot;occ&quot;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># splitting training and testing records</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)  <span class="co"># a seed to make it more reproducible</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">kuenm_occsplit</span>(<span class="at">occ =</span> occs, <span class="at">train.proportion =</span> train, <span class="at">method =</span> method, <span class="at">save =</span> save,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> gname)</span></code></pre></div>
+</div>
+<div id="optional-transformation-of-variables" class="section level4">
+<h4>Optional transformation of variables</h4>
+<p>In some cases, it may be useful to transform variables using a principal component analysis. The derived principal components help to summarize the variance in fewer dimensions, which also help to prevent problems of multicollinearity in predictors. The package kuenm includes a function to prepare principal components from raw variables, if needed, variables that represent other scenarios can also be transformed using the rotations of the initial set of principal components.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the documentation of this function can be consulted as follows</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_rpca)</span></code></pre></div>
+</div>
+<div id="preparation-of-variable-sets" class="section level4">
+<h4>Preparation of variable sets</h4>
+<p>Using distinct sets of variables (predictors) when selecting settings for models helps to explore a wider range of parameterizations that can produce good models. Distinct predictor sets produce distinct models and the differences in model projections to distinct scenarios are more accentuated.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_varcomb)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># arguments for the function</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>variables <span class="ot">&lt;-</span> <span class="st">&quot;Variables&quot;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>m_variables <span class="ot">&lt;-</span> <span class="st">&quot;M_variables&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>form <span class="ot">&lt;-</span> <span class="st">&quot;ascii&quot;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># preparing sets</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>vs <span class="ot">&lt;-</span> <span class="fu">kuenm_varcomb</span>(<span class="at">var.dir =</span> variables, <span class="at">out.dir =</span> m_variables, <span class="at">min.number =</span> n, <span class="at">in.format =</span> form,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">out.format =</span> form)</span></code></pre></div>
+<hr>
+</div>
 </div>
 <div id="model-calibration" class="section level3">
 <h3>Model calibration</h3>
 <div id="candidate-model-creation" class="section level4">
 <h4>Candidate model creation</h4>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_cal)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>oj <span class="ot">&lt;-</span> <span class="st">&quot;occ_joint.csv&quot;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>otr <span class="ot">&lt;-</span> <span class="st">&quot;occ_train.csv&quot;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>mvars <span class="ot">&lt;-</span> <span class="st">&quot;M_variables&quot;</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>bcal <span class="ot">&lt;-</span> <span class="st">&quot;batch_cal&quot;</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>candir <span class="ot">&lt;-</span> <span class="st">&quot;Candidate_models&quot;</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>regm <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>fclas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;lq&quot;</span>, <span class="st">&quot;lqp&quot;</span>, <span class="st">&quot;q&quot;</span>)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>mxpath <span class="ot">&lt;-</span> <span class="st">&quot;/mnt/backup/Maxent&quot;</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creating candidate models</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_cal</span>(<span class="at">occ.joint =</span> oj, <span class="at">occ.tra =</span> otr, <span class="at">M.var.dir =</span> mvars, <span class="at">batch =</span> bcal, <span class="at">out.dir =</span> candir,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">max.memory =</span> <span class="dv">1000</span>, <span class="at">reg.mult =</span> regm, <span class="at">f.clas =</span> fclas, <span class="at">args =</span> <span class="cn">NULL</span>, <span class="at">maxent.path =</span> mxpath,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">wait =</span> <span class="cn">FALSE</span>, <span class="at">run =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>The following chunks of code help to explore the documentation of the function to be used, define arguments, and create candidate models. First, documentation and argument definition.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_cal)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>oj <span class="ot">&lt;-</span> <span class="st">&quot;occ_joint.csv&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>otr <span class="ot">&lt;-</span> <span class="st">&quot;occ_train.csv&quot;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>mvars <span class="ot">&lt;-</span> <span class="st">&quot;M_variables&quot;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>bcal <span class="ot">&lt;-</span> <span class="st">&quot;batch_cal&quot;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>candir <span class="ot">&lt;-</span> <span class="st">&quot;Candidate_models&quot;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>regm <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>fclas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;lq&quot;</span>, <span class="st">&quot;lqp&quot;</span>, <span class="st">&quot;q&quot;</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>mxpath <span class="ot">&lt;-</span> <span class="st">&quot;/mnt/backup/Maxent&quot;</span></span></code></pre></div>
+<p>Now the candidate models.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creating candidate models</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_cal</span>(<span class="at">occ.joint =</span> oj, <span class="at">occ.tra =</span> otr, <span class="at">M.var.dir =</span> mvars, <span class="at">batch =</span> bcal, <span class="at">out.dir =</span> candir,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">max.memory =</span> <span class="dv">1000</span>, <span class="at">reg.mult =</span> regm, <span class="at">f.clas =</span> fclas, <span class="at">args =</span> <span class="cn">NULL</span>, <span class="at">maxent.path =</span> mxpath,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">wait =</span> <span class="cn">FALSE</span>, <span class="at">run =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<hr>
 </div>
-<div id="candidate-model-creation-1" class="section level4">
-<h4>Candidate model creation</h4>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_ceval)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>ote <span class="ot">&lt;-</span> <span class="st">&quot;occ_test.csv&quot;</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>cresdir <span class="ot">&lt;-</span> <span class="st">&quot;Calibration_results&quot;</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>criteria <span class="ot">&lt;-</span> <span class="st">&quot;OR_AICc&quot;</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>threshols <span class="ot">&lt;-</span> <span class="dv">5</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>rand_sample <span class="ot">&lt;-</span> <span class="dv">50</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>iterations <span class="ot">&lt;-</span> <span class="dv">500</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># candidate model evaluation and selection</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ceval <span class="ot">&lt;-</span> <span class="fu">kuenm_ceval</span>(<span class="at">path =</span> candir, <span class="at">occ.joint =</span> oj, <span class="at">occ.tra =</span> ote, <span class="at">occ.test =</span> ote,</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">batch =</span> bcal, <span class="at">out.eval =</span> cresdir, <span class="at">threshold =</span> threshold, <span class="at">rand.percent =</span> rand_sample,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">iterations =</span> iterations, <span class="at">selection =</span> criteria)</span></code></pre></div>
+<div id="candidate-model-evaluation" class="section level4">
+<h4>Candidate model evaluation</h4>
+<p>Evaluation of candidate models is done based on three criteria: statistical significance, predictive ability, and model fitting and complexity, in that order. In kuenm, the three metrics to evaluate these criteria are partial ROC (Peterson et al. 2008), omission rates (OR, considering a level of error, <em>E</em>; Anderson et al. 2003), and Akaike information criterion corrected for small sample sizes (AICc; Warren and Seifert 2011). After model evaluation, significant models are filtered, and among those, the ones with omission rates &lt;<em>E</em> (or the ones with the lowest OR) are selected, finally, among the last group of models only those with a value of delta AICc &lt;2 are kept.</p>
+<p>Let’s first check the documentation of the function and define the arguments.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_ceval)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ote <span class="ot">&lt;-</span> <span class="st">&quot;occ_test.csv&quot;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>cresdir <span class="ot">&lt;-</span> <span class="st">&quot;Calibration_results&quot;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>criteria <span class="ot">&lt;-</span> <span class="st">&quot;OR_AICc&quot;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>threshols <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>rand_sample <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>iterations <span class="ot">&lt;-</span> <span class="dv">500</span></span></code></pre></div>
+<p>Now, we can run the evaluation.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># candidate model evaluation and selection</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ceval <span class="ot">&lt;-</span> <span class="fu">kuenm_ceval</span>(<span class="at">path =</span> candir, <span class="at">occ.joint =</span> oj, <span class="at">occ.tra =</span> ote, <span class="at">occ.test =</span> ote,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">batch =</span> bcal, <span class="at">out.eval =</span> cresdir, <span class="at">threshold =</span> threshold, <span class="at">rand.percent =</span> rand_sample,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">iterations =</span> iterations, <span class="at">selection =</span> criteria)</span></code></pre></div>
+<p>When the evaluation is finished, you can explore the results in your working directory. An HTML file will contain a summary of the results from model calibration.</p>
+<p>In this example, the models will be projected to other scenarios, the example data contains a folder with variables masked to a region of interest and other temporal scenarios. We need to prepare manually the folder for model projections based on variable sets selected.</p>
+<hr>
 </div>
 </div>
 <div id="final-models-and-projections" class="section level3">
 <h3>Final models and projections</h3>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_mod)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>bfmod <span class="ot">&lt;-</span> <span class="st">&quot;batch_model&quot;</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>moddir <span class="ot">&lt;-</span> <span class="st">&quot;Final_models&quot;</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>replicates <span class="ot">&lt;-</span> <span class="dv">5</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>gvars <span class="ot">&lt;-</span> <span class="st">&quot;G_variables&quot;</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>rep_type <span class="ot">&lt;-</span> <span class="st">&quot;Bootstrap&quot;</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>jackknife <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>out_format <span class="ot">&lt;-</span> <span class="st">&quot;cloglog&quot;</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>projection <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>ext_type <span class="ot">&lt;-</span> <span class="st">&quot;all&quot;</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># producing all final models and projections</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_mod</span>(<span class="at">occ.joint =</span> oj, <span class="at">M.var.dir =</span> mvars, <span class="at">out.eval =</span> cresdir, <span class="at">batch =</span> bfmod, <span class="at">rep.n =</span> replicates,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rep.type =</span> rep_type, <span class="at">jackknife =</span> jackknife, <span class="at">out.dir =</span> moddir, <span class="at">out.format =</span> out_format,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">project =</span> projection, <span class="at">G.var.dir =</span> gvars, <span class="at">ext.type =</span> ext_type, <span class="at">maxent.path =</span> mxpath,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">args =</span> <span class="cn">NULL</span>, <span class="at">wait =</span> <span class="cn">FALSE</span>, <span class="at">run =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Once one or more parameter settings have been selected, we can proceed to produce final models and, if needed, projections to other scenarios. First, lets explore the documentation and define the arguments of the function.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_mod)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>bfmod <span class="ot">&lt;-</span> <span class="st">&quot;batch_model&quot;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>moddir <span class="ot">&lt;-</span> <span class="st">&quot;Final_models&quot;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>replicates <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>gvars <span class="ot">&lt;-</span> <span class="st">&quot;G_variables&quot;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>rep_type <span class="ot">&lt;-</span> <span class="st">&quot;Bootstrap&quot;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>jackknife <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>out_format <span class="ot">&lt;-</span> <span class="st">&quot;cloglog&quot;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>projection <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>ext_type <span class="ot">&lt;-</span> <span class="st">&quot;all&quot;</span></span></code></pre></div>
+<p>Now, the final models and its projections can be produced.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># producing all final models and projections</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_mod</span>(<span class="at">occ.joint =</span> oj, <span class="at">M.var.dir =</span> mvars, <span class="at">out.eval =</span> cresdir, <span class="at">batch =</span> bfmod, <span class="at">rep.n =</span> replicates,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rep.type =</span> rep_type, <span class="at">jackknife =</span> jackknife, <span class="at">out.dir =</span> moddir, <span class="at">out.format =</span> out_format,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">project =</span> projection, <span class="at">G.var.dir =</span> gvars, <span class="at">ext.type =</span> ext_type, <span class="at">maxent.path =</span> mxpath,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">args =</span> <span class="cn">NULL</span>, <span class="at">wait =</span> <span class="cn">FALSE</span>, <span class="at">run =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<hr>
 </div>
 <div id="independent-evaluation-of-final-models" class="section level3">
 <h3>Independent evaluation of final models</h3>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_feval)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>oi <span class="ot">&lt;-</span> <span class="st">&quot;aame_ind.csv&quot;</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>eval_dir <span class="ot">&lt;-</span> <span class="st">&quot;F_models_evaluation&quot;</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>replicated <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># evaluation of final models with independent data</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>feval <span class="ot">&lt;-</span> <span class="fu">kuenm_feval</span>(<span class="at">path =</span> moddir, <span class="at">occ.joint =</span> oj, <span class="at">occ.ind =</span> oi, <span class="at">replicates =</span> replicated,</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">out.eval =</span> eval_dir, <span class="at">threshold =</span> threshold, <span class="at">rand.percent =</span> rand_sample, <span class="at">iterations =</span> iterations)</span></code></pre></div>
+<p><strong>Independent data</strong> could help us to evaluate a model with even more rigor. These type of data is not easy to obtain and it is rare to see model evaluation with truly independent records. However, if available, the following chunks of code show how to perform evaluations of final models based on statistical significance and predictive ability. Let’s explore the documentation and define the arguments.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_feval)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>oi <span class="ot">&lt;-</span> <span class="st">&quot;aame_ind.csv&quot;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>eval_dir <span class="ot">&lt;-</span> <span class="st">&quot;F_models_evaluation&quot;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>replicated <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span></code></pre></div>
+<p>Now let’s run final model evaluation.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># evaluation of final models with independent data</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>feval <span class="ot">&lt;-</span> <span class="fu">kuenm_feval</span>(<span class="at">path =</span> moddir, <span class="at">occ.joint =</span> oj, <span class="at">occ.ind =</span> oi, <span class="at">replicates =</span> replicated,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">out.eval =</span> eval_dir, <span class="at">threshold =</span> threshold, <span class="at">rand.percent =</span> rand_sample, <span class="at">iterations =</span> iterations)</span></code></pre></div>
+<hr>
 </div>
 <div id="model-statistics-and-consensus" class="section level3">
 <h3>Model statistics and consensus</h3>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_modstats)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>spname <span class="ot">&lt;-</span> <span class="st">&quot;Amblyomma_americanum_all&quot;</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>format <span class="ot">&lt;-</span> <span class="st">&quot;asc&quot;</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;med&quot;</span>, <span class="st">&quot;range&quot;</span>)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;current&quot;</span>, <span class="st">&quot;cc_rcp45&quot;</span>, <span class="st">&quot;cc_rcp85&quot;</span>)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>ext_selected <span class="ot">&lt;-</span> <span class="st">&quot;E&quot;</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>modstats <span class="ot">&lt;-</span> <span class="st">&quot;Final_Model_Stats&quot;</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model statistic calculations</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_modstats</span>(<span class="at">sp.name =</span> spname, <span class="at">fmod.dir =</span> moddir, <span class="at">format =</span> format, <span class="at">project =</span> projection,</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistics =</span> stats, <span class="at">replicated =</span> replicated, <span class="at">proj.scenarios =</span> scenarios, <span class="at">ext.type =</span> ext_selected,</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">out.dir =</span> modstats)</span></code></pre></div>
+<p>Many times more than one set of parameter settings ends up in good models. As when don’t really know the truth of the ecological niche, and it is complicated to determine which of those multiple models is the best, creating all models is a good idea. However, it is difficult to present all the results of multiple models. This is why calculations of descriptive statistics can help to summarize results. Let’s check and define the arguments of the function of kuenm that helps us calculate model statistics.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_modstats)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>spname <span class="ot">&lt;-</span> <span class="st">&quot;Amblyomma_americanum_all&quot;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>format <span class="ot">&lt;-</span> <span class="st">&quot;asc&quot;</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;med&quot;</span>, <span class="st">&quot;range&quot;</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;current&quot;</span>, <span class="st">&quot;cc_rcp45&quot;</span>, <span class="st">&quot;cc_rcp85&quot;</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>ext_selected <span class="ot">&lt;-</span> <span class="st">&quot;E&quot;</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>modstats <span class="ot">&lt;-</span> <span class="st">&quot;Final_Model_Stats&quot;</span></span></code></pre></div>
+<p>Now the calculations.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model statistic calculations</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_modstats</span>(<span class="at">sp.name =</span> spname, <span class="at">fmod.dir =</span> moddir, <span class="at">format =</span> format, <span class="at">project =</span> projection,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistics =</span> stats, <span class="at">replicated =</span> replicated, <span class="at">proj.scenarios =</span> scenarios, <span class="at">ext.type =</span> ext_selected,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">out.dir =</span> modstats)</span></code></pre></div>
+<hr>
+<p><br></p>
 </div>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Anderson, R.P., Lew, D. &amp; Peterson, A.T. (2003) Evaluating predictive models of species’ distributions: Criteria for selecting optimal models. Ecological Modelling 162, 211–232.</p>
+<p>Cobos, M.E., Peterson, A.T., Barve, N. &amp; Osorio-Olvera, L. (2019) kuenm: An R package for detailed development of ecological niche models using Maxent. PeerJ 7, e6281.</p>
+<p>Cobos, M.E., Peterson, A.T., Osorio-Olvera, L. &amp; Jiménez-García, D. (2019) An exhaustive analysis of heuristic methods for variable selection in ecological niche modeling and species distribution modeling. Ecological Informatics 53, 100983.</p>
+<p>Peterson, A.T., Papeş, M. &amp; Soberón, J. (2008) Rethinking receiver operating characteristic analysis applications in ecological niche modeling. Ecological Modelling 213, 63–72.</p>
+<p>Warren, D.L. &amp; Seifert, S.N. (2011) Ecological niche modeling in Maxent: the importance of model complexity and the performance of model selection criteria. Ecological Applications 21, 335–342.</p>
 </div>
 </div>
 

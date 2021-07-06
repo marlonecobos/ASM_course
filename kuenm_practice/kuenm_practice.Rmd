@@ -25,9 +25,11 @@ knitr::opts_knit$set(width = 100)
 
 ## Description
 
-This script is a guide to. 
+This script is a guide to use the R package <a href="https://github.com/marlonecobos/kuenm#kuenm-an-r-package-for-detailed-development-of-maxent-ecological-niche-models" target="_blank">kuenm</a> to perform ecological niche modeling (ENM) exercises. The guide is focused on the functions of the package that are directly related to the process of ENM. 
 
-The data that we would use can be downloaded following this **link**. 
+All data to be used can be obtained using the R code presented below. All data and code related to this topic is stored in the GitHub repository <a href="https://github.com/marlonecobos/ASM_course" target="_blank">ASM Course</a>.
+
+<hr>
 
 <br>
 
@@ -35,6 +37,7 @@ The data that we would use can be downloaded following this **link**.
 
 ### Initial dependencies
 
+The package kuenm uses the algorithm of Maxent to create models, therefore, a crucial requirement is to have the maxent.jar application in any user-defined directory (maintaining it in a fixed directory is always a good idea). This software is available in the <a href="https://biodiversityinformatics.amnh.org/open_source/maxent/" target="_blank">Maxent repository</a>. To use Maxent you need to install <a href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html" target="_blank">Java Development Kit</a> (see also, <a href="https://openjdk.java.net/" target="_blank">Open JDK</a>, or <a href="https://aws.amazon.com/corretto/" target="_blank">Amazon Coretto</a>). Finally, kuenm requires compilation tools (i.e., <a href="https://cran.r-project.org/bin/windows/Rtools/" target="_blank">Rtools</a> on Windows,  <a href="https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/" target="_blank">Xcode</a> on Mac).
 
 
 ### R pacakages needed
@@ -60,12 +63,17 @@ library(kuenm)
 
 ### Working directory 
 
-The simulations will be run using data from a local directory, and results will also be written in the this directory. For these reasons, it is important to define a working directory that suits your needs.
+The analyses with the example data will run using data from a local directory, and results will also be written in the this directory. For these reasons, it is important to define a working directory that suits your needs (creating a new directory may be a good idea).
 
 ```{r wd, eval=FALSE}
-# please change "YOUR/DIRECTORY" as needed
+# find current directory
+getwd()
+
+# define new directory, please change "YOUR/DIRECTORY" as needed
 setwd("YOUR/DIRECTORY")
 ```
+
+<hr>
 
 <br>
 
@@ -81,13 +89,17 @@ Data needed to replicate these analyses are:
 
 ### Workflow description
 
-Once the data to create ENMs is properly prepared, ecological niche modeling starts with the process of model calibration. During calibration several candidate models are tested under user defined criteria of performance and the best performing model or models are selected to create final models. 
+Once the data to create ENMs is properly prepared, ecological niche modeling starts with the process of model calibration. During calibration several candidate models are tested under user defined criteria of performance and the best performing model or models are selected. Final models are then created using the parameterizations of selected models. If needed, these models are projected to other scenarios (different areas or times). The workflow ends in the calculation of general statistics of final models obtained with multiple parameterizations (e.g., median and range). 
+
+<hr>
 
 <br>
 
 ## Example case
 
 ### Getting the data
+
+The following lines of code help to download and unzip the data that will be used in the example. Change "YOUR/DIRECTORY" as needed. 
 
 ```{r get_data, eval=FALSE}
 # where to get it and where to save it (change "YOUR/DIRECTORY")
@@ -109,36 +121,68 @@ unzip(zipfile = zip_file, exdir = ex_dir)
 dir() 
 ```
 
+<hr>
 
 ### Final preparations
 
+Before running analysis directly related to the ecological niche modeling process, occurrence records will be split into training and testing records, and variables will be separated into distinct sets. 
 
+#### Occurrence split
+
+The code below helps to split the records, the sets of records will be written in the working directory.
 
 ```{r fin_prep, eval=FALSE}
-# splitting training and testing records
+# function documentation
 help(kuenm_occsplit)
 
+# object and arguments to be used
 occs <- read.csv("aame.csv")
+train <- 0.7
+method <- "random"
+save <- TRUE
+gname <- "occ"
 
-set.seed(1)
-split <- kuenm_occsplit(occ = occs, train.proportion = 0.7, method = "random",
-                        save = TRUE, name = "occ")
+# splitting training and testing records
+set.seed(1) # a seed to make it more reproducible
+split <- kuenm_occsplit(occ = occs, train.proportion = train, method = method,
+                        save = save, name = gname)
 ```
 
+#### Optional transformation of variables
 
+In some cases, it may be useful to transform variables using a principal component analysis. The derived principal components help to summarize the variance in fewer dimensions, which also help to prevent problems of multicollinearity in predictors. The package kuenm includes a function to prepare principal components from raw variables, if needed, variables that represent other scenarios can also be transformed using the rotations of the initial set of principal components.
 
-```{r fin_prep1, eval=FALSE}
-# preparing sets of variables
+```{r fin_prep2, eval=FALSE}
+# the documentation of this function can be consulted as follows
+help(kuenm_rpca)
+```
+
+#### Preparation of variable sets
+
+Using distinct sets of variables (predictors) when selecting settings for models helps to explore a wider range of parameterizations that can produce good models. Distinct predictor sets produce distinct models and the differences in model projections to distinct scenarios are more accentuated.
+
+```{r fin_prep3, eval=FALSE}
+# function documentation
 help(kuenm_varcomb)
 
-vs <- kuenm_varcomb(var.dir = "Variables", out.dir = "M_variables", min.number = 3, 
-                    in.format = "ascii", out.format = "ascii")
+# arguments for the function
+variables <- "Variables"
+m_variables <- "M_variables"
+n <- 3
+form <- "ascii"
+
+# preparing sets
+vs <- kuenm_varcomb(var.dir = variables, out.dir = m_variables, 
+                    min.number = n, in.format = form, out.format = form)
 ```
 
+<hr>
 
 ### Model calibration
 
 #### Candidate model creation
+
+The following chunks of code help to explore the documentation of the function to be used, define arguments, and create candidate models. First, documentation and argument definition.  
 
 ```{r calibration, eval=FALSE}
 # function documentation and argument definition
@@ -154,7 +198,7 @@ fclas <- c("lq", "lqp", "q")
 mxpath <- "/mnt/backup/Maxent"
 ```
 
-
+Now the candidate models.
 
 ```{r calibration1, eval=FALSE}
 # creating candidate models
@@ -164,8 +208,13 @@ kuenm_cal(occ.joint = oj, occ.tra = otr, M.var.dir = mvars,
           maxent.path = mxpath, wait = FALSE, run = TRUE)
 ```
 
+<hr>
 
-#### Candidate model creation
+#### Candidate model evaluation
+
+Evaluation of candidate models is done based on three criteria: statistical significance, predictive ability, and model fitting and complexity, in that order. In kuenm, the three metrics to evaluate these criteria are partial ROC (Peterson et al. 2008), omission rates (OR, considering a level of error, *E*; Anderson et al. 2003), and Akaike information criterion corrected for small sample sizes (AICc; Warren and Seifert 2011). After model evaluation, significant models are filtered, and among those, the ones with omission rates <*E* (or the ones with the lowest OR) are selected, finally, among the last group of models only those with a value of delta AICc <2 are kept.
+
+Let's first check the documentation of the function and define the arguments.
 
 ```{r calibration2, eval=FALSE}
 # function documentation and argument definition
@@ -179,7 +228,7 @@ rand_sample <- 50
 iterations <- 500
 ```
 
-
+Now, we can run the evaluation.
 
 ```{r calibration3, eval=FALSE}
 # candidate model evaluation and selection
@@ -189,8 +238,15 @@ ceval <- kuenm_ceval(path = candir, occ.joint = oj, occ.tra = ote,
                      iterations = iterations, selection = criteria)
 ```
 
+When the evaluation is finished, you can explore the results in your working directory. An HTML file will contain a summary of the results from model calibration. 
+
+In this example, the models will be projected to other scenarios, the example data contains a folder with variables masked to a region of interest and other temporal scenarios. We need to prepare manually the folder for model projections based on variable sets selected.   
+
+<hr>
 
 ### Final models and projections
+
+Once one or more parameter settings have been selected, we can proceed to produce final models and, if needed, projections to other scenarios. First, lets explore the documentation and define the arguments of the function.
 
 ```{r fin_models, eval=FALSE}
 # function documentation and argument definition
@@ -207,6 +263,7 @@ projection <- TRUE
 ext_type <- "all"
 ```
 
+Now, the final models and its projections can be produced.
 
 ```{r fin_models1, eval=FALSE}
 # producing all final models and projections
@@ -217,8 +274,11 @@ kuenm_mod(occ.joint = oj, M.var.dir = mvars, out.eval = cresdir,
           maxent.path = mxpath, args = NULL, wait = FALSE, run = TRUE)
 ```
 
+<hr>
 
 ### Independent evaluation of final models
+
+**Independent data** could help us to evaluate a model with even more rigor. These type of data is not easy to obtain and it is rare to see model evaluation with truly independent records. However, if available, the following chunks of code show how to perform evaluations of final models based on statistical significance and predictive ability. Let's explore the documentation and define the arguments.
 
 ```{r ind_eval, eval=FALSE}
 # function documentation and argument definition
@@ -229,6 +289,7 @@ eval_dir <- "F_models_evaluation"
 replicated <- TRUE 
 ```
 
+Now let's run final model evaluation.
 
 ```{r ind_eval1, eval=FALSE}
 # evaluation of final models with independent data
@@ -238,8 +299,11 @@ feval <- kuenm_feval(path = moddir, occ.joint = oj, occ.ind = oi,
                      iterations = iterations)
 ```
 
+<hr>
 
 ### Model statistics and consensus
+
+Many times more than one set of parameter settings ends up in good models. As when don't really know the truth of the ecological niche, and it is complicated to determine which of those multiple models is the best, creating all models is a good idea. However, it is difficult to present all the results of multiple models. This is why calculations of descriptive statistics can help to summarize results. Let's check and define the arguments of the function of kuenm that helps us calculate model statistics.  
 
 ```{r mod_stats, eval=FALSE}
 # function documentation and argument definition
@@ -253,6 +317,7 @@ ext_selected <- "E"
 modstats <- "Final_Model_Stats"
 ```
 
+Now the calculations.
 
 ```{r mod_stats1, eval=FALSE}
 # model statistic calculations
@@ -261,3 +326,19 @@ kuenm_modstats(sp.name = spname, fmod.dir = moddir, format = format,
                replicated = replicated, proj.scenarios = scenarios, 
                ext.type = ext_selected, out.dir = modstats)
 ```
+
+<hr>
+
+<br>
+
+## References
+
+Anderson, R.P., Lew, D. & Peterson, A.T. (2003) Evaluating predictive models of species’ distributions: Criteria for selecting optimal models. Ecological Modelling 162, 211–232.
+
+Cobos, M.E., Peterson, A.T., Barve, N. & Osorio-Olvera, L. (2019) kuenm: An R package for detailed development of ecological niche models using Maxent. PeerJ 7, e6281.
+
+Cobos, M.E., Peterson, A.T., Osorio-Olvera, L. & Jiménez-García, D. (2019) An exhaustive analysis of heuristic methods for variable selection in ecological niche modeling and species distribution modeling. Ecological Informatics 53, 100983.
+
+Peterson, A.T., Papeş, M. & Soberón, J. (2008) Rethinking receiver operating characteristic analysis applications in ecological niche modeling. Ecological Modelling 213, 63–72.
+
+Warren, D.L. & Seifert, S.N. (2011) Ecological niche modeling in Maxent: the importance of model complexity and the performance of model selection criteria. Ecological Applications 21, 335–342.
