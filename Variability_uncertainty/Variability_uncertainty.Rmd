@@ -1,0 +1,93 @@
+---
+title: "Exploring variability and uncertainty in ENM results"
+author: "Marlon E. Cobos"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
+    fig_width: 7
+    fig_height: 6
+    toc_depth: 3
+    use_bookdown: true
+    number_sections: false
+---
+
+```{r setup, include=FALSE}
+# global options
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE, prompt = FALSE, tidy = TRUE,
+                      comment = NA, message = FALSE, warning = FALSE, 
+                      fig.align = "center")
+knitr::opts_knit$set(width = 100)
+```
+
+## Description
+
+This script is a guide to. 
+
+The data that we would use can be downloaded following this **link**. 
+
+<br>
+
+## Setting up R
+
+### Initial dependencies
+
+
+
+### R pacakages needed
+
+The following lines of code help to install the R package needed to perform ENM and all relevant dependencies.  
+
+```{r install, eval=FALSE}
+# R package to install packages from GitHub
+install.packages("remotes")
+
+# R package to run dispersal simulations
+remotes::install_github("marlonecobos/kuenm")
+```
+
+Now we can load the packages needed to read the data we will use and run the simulations.
+
+```{r load, message=FALSE}
+# loading packages
+library(raster)
+library(kuenm)
+```
+
+
+### Working directory 
+
+The simulations will be run using data from a local directory, and results will also be written in the this directory. For these reasons, it is important to define a working directory that suits your needs.
+
+```{r wd, eval=FALSE}
+# please change "YOUR/DIRECTORY" as needed
+setwd("YOUR/DIRECTORY")
+```
+
+<br>
+
+## How to explore uncertainty and variability in ENM
+
+### Data required
+
+### Workflow description
+
+The information required to run this type of simulation is related to  
+
+<br>
+
+## Example case
+
+### Data
+
+### MOP analysis
+
+### Variability withing future model projections
+
+### Mapping variance from distinct sources
+
+### Hierarchical partitioning of variance
+
