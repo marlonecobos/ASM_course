@@ -222,7 +222,7 @@ help(kuenm_ceval)
 ote <- "occ_test.csv"
 cresdir <- "Calibration_results"
 criteria <- "OR_AICc"
-threshols <- 5
+threshold <- 5
 rand_sample <- 50
 iterations <- 500
 ```
@@ -308,7 +308,7 @@ Many times more than one set of parameter settings ends up in good models. As wh
 # function documentation and argument definition
 help(kuenm_modstats)
 
-spname <- "Amblyomma_americanum_all"
+spname <- "Amblyomma_americanum"
 format <- "asc"
 stats <- c("med", "range")
 scenarios <- c("current", "cc_rcp45", "cc_rcp85", "mi_rcp45", "mi_rcp85")
@@ -324,6 +324,32 @@ kuenm_modstats(sp.name = spname, fmod.dir = moddir, format = format,
                project = projection, statistics = stats, 
                replicated = replicated, proj.scenarios = scenarios, 
                ext.type = ext_selected, out.dir = modstats)
+```
+
+<hr>
+
+### Detecting changes in future projections
+
+One of the main goals of producing model projections to future scenarios is to explore potential effects of climate change on species distributions. This generally translates into detecting stable suitable areas and areas where suitability can be lost or gained. A function of kuenm helps to explore this changes using the model statistics produced before. Let's check the function documentation and define the arguments needed.  
+
+```{r mod_chan, eval=FALSE}
+# function documentation and argument definition
+help(kuenm_projchanges)
+
+curpatt <- "current"
+emscepatt <- c("rcp45", "rcp85")
+gcms <- c("cc", "mi")
+dir_proch <- "Projection_changes"
+```
+
+Now the analysis.
+
+```{r mod_chan1, eval=FALSE}
+# detecting changes in suitable areas
+kuenm_projchanges(occ = oj, fmod.stats = modstats, threshold = threshold, 
+                  current = curpatt, emi.scenarios = emscepatt, 
+                  clim.models = gcms, ext.type = ext_selected, 
+                  out.dir = dir_proch)
 ```
 
 <hr>

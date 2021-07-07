@@ -210,6 +210,7 @@
       <li><a href="#final-models-and-projections">Final models and projections</a></li>
       <li><a href="#independent-evaluation-of-final-models">Independent evaluation of final models</a></li>
       <li><a href="#model-statistics-and-consensus">Model statistics and consensus</a></li>
+      <li><a href="#detecting-changes-in-future-projections">Detecting changes in future projections</a></li>
       </ul></li>
       <li><a href="#references">References</a></li>
       </ul>
@@ -382,7 +383,7 @@
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ote <span class="ot">&lt;-</span> <span class="st">&quot;occ_test.csv&quot;</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>cresdir <span class="ot">&lt;-</span> <span class="st">&quot;Calibration_results&quot;</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>criteria <span class="ot">&lt;-</span> <span class="st">&quot;OR_AICc&quot;</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>threshols <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>threshold <span class="ot">&lt;-</span> <span class="dv">5</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>rand_sample <span class="ot">&lt;-</span> <span class="dv">50</span></span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>iterations <span class="ot">&lt;-</span> <span class="dv">500</span></span></code></pre></div>
 <p>Now, we can run the evaluation.</p>
@@ -439,7 +440,7 @@
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_modstats)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>spname <span class="ot">&lt;-</span> <span class="st">&quot;Amblyomma_americanum_all&quot;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>spname <span class="ot">&lt;-</span> <span class="st">&quot;Amblyomma_americanum&quot;</span></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>format <span class="ot">&lt;-</span> <span class="st">&quot;asc&quot;</span></span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;med&quot;</span>, <span class="st">&quot;range&quot;</span>)</span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;current&quot;</span>, <span class="st">&quot;cc_rcp45&quot;</span>, <span class="st">&quot;cc_rcp85&quot;</span>, <span class="st">&quot;mi_rcp45&quot;</span>, <span class="st">&quot;mi_rcp85&quot;</span>)</span>
@@ -450,6 +451,22 @@
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_modstats</span>(<span class="at">sp.name =</span> spname, <span class="at">fmod.dir =</span> moddir, <span class="at">format =</span> format, <span class="at">project =</span> projection,</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistics =</span> stats, <span class="at">replicated =</span> replicated, <span class="at">proj.scenarios =</span> scenarios, <span class="at">ext.type =</span> ext_selected,</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">out.dir =</span> modstats)</span></code></pre></div>
+<hr>
+</div>
+<div id="detecting-changes-in-future-projections" class="section level3">
+<h3>Detecting changes in future projections</h3>
+<p>One of the main goals of producing model projections to future scenarios is to explore potential effects of climate change on species distributions. This generally translates into detecting stable suitable areas and areas where suitability can be lost or gained. A function of kuenm helps to explore this changes using the model statistics produced before. Let’s check the function documentation and define the arguments needed.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_projchanges)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>curpatt <span class="ot">&lt;-</span> <span class="st">&quot;current&quot;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>emscepatt <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;rcp45&quot;</span>, <span class="st">&quot;rcp85&quot;</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>gcms <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;cc&quot;</span>, <span class="st">&quot;mi&quot;</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>dir_proch <span class="ot">&lt;-</span> <span class="st">&quot;Projection_changes&quot;</span></span></code></pre></div>
+<p>Now the analysis.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># detecting changes in suitable areas</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_projchanges</span>(<span class="at">occ =</span> oj, <span class="at">fmod.stats =</span> modstats, <span class="at">threshold =</span> threshold, <span class="at">current =</span> curpatt,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">emi.scenarios =</span> emscepatt, <span class="at">clim.models =</span> gcms, <span class="at">ext.type =</span> ext_selected, <span class="at">out.dir =</span> dir_proch)</span></code></pre></div>
 <hr>
 <p><br></p>
 </div>
