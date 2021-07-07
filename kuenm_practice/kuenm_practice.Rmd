@@ -312,7 +312,7 @@ help(kuenm_modstats)
 spname <- "Amblyomma_americanum_all"
 format <- "asc"
 stats <- c("med", "range")
-scenarios <- c("current", "cc_rcp45", "cc_rcp85")
+scenarios <- c("current", "cc_rcp45", "cc_rcp85", "mi_rcp45", "mi_rcp85")
 ext_selected <- "E"
 modstats <- "Final_Model_Stats"
 ```
