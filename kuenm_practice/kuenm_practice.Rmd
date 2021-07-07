@@ -104,18 +104,17 @@ The following lines of code help to download and unzip the data that will be use
 ```{r get_data, eval=FALSE}
 # where to get it and where to save it (change "YOUR/DIRECTORY")
 url_data <- "https://github.com/marlonecobos/ASM_course/raw/main/kuenm_practice/Data.zip"
-data_file <- "YOUR/DIRECTORY/Data.zip"
+data_file <- "Data.zip"
 
 # download data
 download.file(url = url_data, destfile = data_file, mode = "wb",
               quiet = FALSE)
 
 # files and directory to unzip
-zip_file <- "YOUR/DIRECTORY/Data.zip"
-ex_dir <- "YOUR/DIRECTORY"
+ex_dir <- "."
 
 # unzipping the data
-unzip(zipfile = zip_file, exdir = ex_dir)
+unzip(zipfile = data_file, exdir = ex_dir)
 
 # check what is in your working directory
 dir() 
@@ -269,7 +268,7 @@ Now, the final models and its projections can be produced.
 # producing all final models and projections
 kuenm_mod(occ.joint = oj, M.var.dir = mvars, out.eval = cresdir, 
           batch = bfmod, rep.n = replicates, rep.type = rep_type,
-          jackknife = jackknife, out.dir = moddir, out.format = out_format, 
+          jackknife = jackknife, out.dir = moddir, out.format = out_format,
           project = projection, G.var.dir = gvars, ext.type = ext_type, 
           maxent.path = mxpath, args = NULL, wait = FALSE, run = TRUE)
 ```
