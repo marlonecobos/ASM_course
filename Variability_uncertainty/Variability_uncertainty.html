@@ -7,7 +7,7 @@
 
         <meta name="author" content="Marlon E. Cobos" />
     
-        <meta name="date" content="2021-07-07" />
+        <meta name="date" content="2021-07-08" />
     
     <title>Exploring variability and uncertainty in ENM results</title>
 
@@ -195,15 +195,17 @@
       <li><a href="#workflow-description">Workflow description</a></li>
       <li><a href="#example-case">Example case</a>
       <ul>
-      <li><a href="#mop-analysis">MOP analysis</a></li>
       <li><a href="#mapping-variance-from-distinct-sources">Mapping variance from distinct sources</a></li>
       <li><a href="#hierarchical-partitioning-of-variance">Hierarchical partitioning of variance</a></li>
+      <li><a href="#mop-analysis">MOP analysis</a></li>
+      <li><a href="#mop-agreement">MOP agreement</a></li>
       </ul></li>
+      <li><a href="#references">References</a></li>
       </ul>
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Marlon E. Cobos</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-07-07</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-07-08</p>
           </div>
    </div>
      
@@ -216,7 +218,8 @@
 <div id="description" class="section level2">
 <h2>Description</h2>
 <p>This is a guide to assess and map variability and uncertainty in results from ecological niche modeling (ENM) exercises. We use the <a href="https://github.com/marlonecobos/kuenm#kuenm-an-r-package-for-detailed-development-of-maxent-ecological-niche-models" target="_blank">kuenm</a> package to perform analyses using results from final model and projections. The guide is focused on the functions of the package dedicated to post-modeling analysis.</p>
-<p>The data and results required to perform the analyses in this guide can be obtained by following the <strong>kuenm_practice guide</strong>, which can be in the GitHub repository <a href="https://github.com/marlonecobos/ASM_course" target="_blank">ASM Course</a>.</p>
+<p>The data and results required to perform the analyses in this guide can be obtained by following the <strong>kuenm_practice guide</strong>, which can be found in the GitHub repository <a href="https://github.com/marlonecobos/ASM_course" target="_blank">ASM Course</a>.</p>
+<hr>
 <p><br></p>
 </div>
 <div id="r-pacakge-and-working-directory" class="section level2">
@@ -227,44 +230,99 @@
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># set working directory, please change &#39;YOUR/DIRECTORY&#39; as needed</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;YOUR/DIRECTORY&quot;</span>)</span></code></pre></div>
+<hr>
 <p><br></p>
 </div>
 <div id="workflow-description" class="section level2">
 <h2>Workflow description</h2>
-<p>The information required to run this type of simulation is related to</p>
+<p>Once all final models and their projections are obtained, we can use some analysis to explore variability and uncertainty in our results. Variability is explored by mapping the variance that comes from distinct sources in our results. Another way to explore variability is by using a more statistically-driven approach that partitions the variance and measures the effect of distinct sources of variation on the total variance in our results. Uncertainty can be explored by mapping risks of extrapolation derived from the presence of environments in spatial and temporal projections that are non-analogous to conditions in the calibration area. When multiple climate models are used to represent each scenario of projection, the agreement of areas detected to have risks of strict extrapolation can be quantified.</p>
+<hr>
 <p><br></p>
 </div>
 <div id="example-case" class="section level2">
 <h2>Example case</h2>
-<div id="mop-analysis" class="section level3">
-<h3>MOP analysis</h3>
-<p>The mobility-oriented parity metric (MOP; Owens et al. 2013) allows to identify levels of similarity between environmental conditions in the calibration area and other scenarios where models will be projected. The results obtained can be mapped to detect areas where conditions are completely different (non-analogous) to those in the calibration area (areas of strict extrapolation). Interpretations in areas of strict extrapolation must be done carefully as the results in those areas are the result of how models are extrapolating. The package kuenm contains tools to perform the MOP analysis for distinct scenarios. Let’s check the function documentation and defined the arguments.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_mmop)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>set <span class="ot">&lt;-</span> <span class="st">&quot;Set_4&quot;</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>swd <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>percentage <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>parall <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>outmop <span class="ot">&lt;-</span> <span class="st">&quot;MOP_results&quot;</span></span></code></pre></div>
-<p>Now the analysis.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mop analysis for multiple scenarios</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_mmop</span>(<span class="at">G.var.dir =</span> gvars, <span class="at">M.var.dir =</span> mvars, <span class="at">is.swd =</span> swd, <span class="at">sets.var =</span> set, <span class="at">out.mop =</span> outmop,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">percent =</span> percentage, <span class="at">comp.each =</span> comp, <span class="at">parallel =</span> parall)</span></code></pre></div>
-</div>
 <div id="mapping-variance-from-distinct-sources" class="section level3">
 <h3>Mapping variance from distinct sources</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span></code></pre></div>
-<p>Now the analysis.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mop analysis for multiple scenarios</span></span></code></pre></div>
+<p>A very convenient way to represent variability in our models is to map the amount of variance that derives from each source of variation. the package kuenm has tools to perform such analysis. The following lines of code help to access the function documentation, define arguments and run the analysis needed to create the maps.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_modvar)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>spname <span class="ot">&lt;-</span> <span class="st">&quot;Amblyomma_americanum&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>moddir <span class="ot">&lt;-</span> <span class="st">&quot;Final_models&quot;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>swd <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>format <span class="ot">&lt;-</span> <span class="st">&quot;asc&quot;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>replicated <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>curpatt <span class="ot">&lt;-</span> <span class="st">&quot;current&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>projected <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>emscepatt <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;rcp45&quot;</span>, <span class="st">&quot;rcp85&quot;</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>gcms <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;cc&quot;</span>, <span class="st">&quot;mi&quot;</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>ext_selected <span class="ot">&lt;-</span> <span class="st">&quot;E&quot;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>dir_var <span class="ot">&lt;-</span> <span class="st">&quot;Variance_maps&quot;</span></span></code></pre></div>
+<p>Running the analysis.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mapping the variance from distinct sources</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_modvar</span>(<span class="at">sp.name =</span> spname, <span class="at">fmod.dir =</span> moddir, <span class="at">is.swd =</span> swd, <span class="at">replicated =</span> replicated,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">format =</span> format, <span class="at">project =</span> projected, <span class="at">current =</span> curpatt, <span class="at">emi.scenarios =</span> emscepatt,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">ext.type =</span> ext_selected, <span class="at">clim.models =</span> gcms, <span class="at">out.dir =</span> dir_var)</span></code></pre></div>
+<hr>
 </div>
 <div id="hierarchical-partitioning-of-variance" class="section level3">
 <h3>Hierarchical partitioning of variance</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span></code></pre></div>
-<p>Now the analysis.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mop analysis for multiple scenarios</span></span></code></pre></div>
+<p>Hierarchical partitioning of the variance is a non-parametric statistical test that allow us to quantify the effect of distinct sources of variation on the total variance in our results (Cobos et al. 2019). The following chunks of code help to perform this analysis using functions of kuenm.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_hierpart)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>iterations <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>sample_size <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>hpart_dir <span class="ot">&lt;-</span> <span class="st">&quot;Hierarchical_partitioning&quot;</span></span></code></pre></div>
+<p>Let’s run the analysis.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mop analysis for multiple scenarios</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_hierpart</span>(<span class="at">sp.name =</span> spname, <span class="at">fmod.dir =</span> moddir, <span class="at">replicated =</span> replicated, <span class="at">format =</span> format,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">project =</span> projected, <span class="at">current =</span> curpatt, <span class="at">emi.scenarios =</span> emscepatt, <span class="at">clim.models =</span> gcms,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">iterations =</span> iterations, <span class="at">sample.size =</span> sample_size, <span class="at">ext.type =</span> ext_selected,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">out.dir =</span> hpart_dir)</span></code></pre></div>
+<hr>
 </div>
+<div id="mop-analysis" class="section level3">
+<h3>MOP analysis</h3>
+<p>The mobility-oriented parity metric (MOP; Owens et al. 2013) allows to identify levels of similarity between environmental conditions in the calibration area and other scenarios where models will be projected. The results obtained can be mapped to detect areas where conditions are completely different (non-analogous) to those in the calibration area (areas of strict extrapolation). Interpretations in areas of strict extrapolation must be done carefully as the results in those areas are the result of how models are extrapolating. The package kuenm contains tools to perform the MOP analysis for distinct scenarios.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_mmop)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>set <span class="ot">&lt;-</span> <span class="st">&quot;Set_4&quot;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>percentage <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>parall <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>outmop <span class="ot">&lt;-</span> <span class="st">&quot;MOP_results&quot;</span></span></code></pre></div>
+<p>Now the analysis.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mop analysis for multiple scenarios</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_mmop</span>(<span class="at">G.var.dir =</span> gvars, <span class="at">M.var.dir =</span> mvars, <span class="at">is.swd =</span> swd, <span class="at">sets.var =</span> set, <span class="at">out.mop =</span> outmop,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">percent =</span> percentage, <span class="at">comp.each =</span> comp, <span class="at">parallel =</span> parall)</span></code></pre></div>
+<hr>
+</div>
+<div id="mop-agreement" class="section level3">
+<h3>MOP agreement</h3>
+<p>When multiple scenarios and GCMs are used, it may be a good idea to calculate the agreement of areas detected to be non-analogous among those GCMs for every scenario in question. The following lines of code will help to identify such areas of agreement.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_mopagree)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>format1 <span class="ot">&lt;-</span> <span class="st">&quot;GTiff&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>mopag_dir <span class="ot">&lt;-</span> <span class="st">&quot;MOP_agreement&quot;</span></span></code></pre></div>
+<p>Now the calculations.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># agreement of areas of extrapolation</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_mopagree</span>(<span class="at">mop.dir =</span> outmop, <span class="at">in.format =</span> format1, <span class="at">out.format =</span> format1, <span class="at">current =</span> curpatt,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">emi.scenarios =</span> emscepatt, <span class="at">out.dir =</span> mopag_dir)</span></code></pre></div>
+<hr>
+<p><br></p>
+</div>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Alkishe, A., Cobos, M.E., Peterson, A.T. &amp; Samy, A.M. (2020) Recognizing sources of uncertainty in disease vector ecological niche models: An example with the tick <em>Rhipicephalus sanguineus sensu lato</em>. Perspectives in Ecology and Conservation.</p>
+<p>Chevan, A. &amp; Sutherland, M. (1991) Hierarchical partitioning. American Statistician 45, 90–96.</p>
+<p>Cobos, M.E., Osorio-Olvera, L. &amp; Peterson, A.T. (2019) Assessment and representation of variability in ecological niche model predictions. bioRxiv. DOI: 10.1101/603100.</p>
+<p>Cobos, M.E., Peterson, A.T., Barve, N. &amp; Osorio-Olvera, L. (2019) kuenm: An R package for detailed development of ecological niche models using Maxent. PeerJ 7, e6281.</p>
+<p>Diniz-Filho, J.A.F., Bini, L.M., Rangel, T.F., Loyola, R.D., Hof, C., Nogués-Bravo, D. &amp; Araújo, M.B. (2009) Partitioning and mapping uncertainties in ensembles of forecasts of species turnover under climate change. Ecography 32, 897–906.</p>
+<p>Peterson, A.T., Cobos, M.E. &amp; Jiménez‐García, D. (2018) Major challenges for correlational ecological niche model projections to future climate conditions. Annals of the New York Academy of Sciences 1429, 66–77.</p>
 </div>
 </div>
 

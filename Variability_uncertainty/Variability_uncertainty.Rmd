@@ -27,7 +27,9 @@ knitr::opts_knit$set(width = 100)
 
 This is a guide to assess and map variability and uncertainty in results from ecological niche modeling (ENM) exercises. We use the <a href="https://github.com/marlonecobos/kuenm#kuenm-an-r-package-for-detailed-development-of-maxent-ecological-niche-models" target="_blank">kuenm</a> package to perform analyses using results from final model and projections. The guide is focused on the functions of the package dedicated to post-modeling analysis.  
 
-The data and results required to perform the analyses in this guide can be obtained by following the **kuenm_practice guide**, which can be in the GitHub repository <a href="https://github.com/marlonecobos/ASM_course" target="_blank">ASM Course</a>.
+The data and results required to perform the analyses in this guide can be obtained by following the **kuenm_practice guide**, which can be found in the GitHub repository <a href="https://github.com/marlonecobos/ASM_course" target="_blank">ASM Course</a>.
+
+<hr>
 
 <br>
 
@@ -43,11 +45,15 @@ library(kuenm)
 setwd("YOUR/DIRECTORY")
 ```
 
+<hr>
+
 <br>
 
 ## Workflow description
 
-The information required to run this type of simulation is related to  
+Once all final models and their projections are obtained, we can use some analysis to explore variability and uncertainty in our results. Variability is explored by mapping the variance that comes from distinct sources in our results. Another way to explore variability is by using a more statistically-driven approach that partitions the variance and measures the effect of distinct sources of variation on the total variance in our results. Uncertainty can be explored by mapping risks of extrapolation derived from the presence of environments in spatial and temporal projections that are non-analogous to conditions in the calibration area. When multiple climate models are used to represent each scenario of projection, the agreement of areas detected to have risks of strict extrapolation can be quantified. 
+
+<hr>
 
 <br>
 
@@ -55,12 +61,15 @@ The information required to run this type of simulation is related to
 
 ### Mapping variance from distinct sources
 
+A very convenient way to represent variability in our models is to map the amount of variance that derives from each source of variation. the package kuenm has tools to perform such analysis. The following lines of code help to access the function documentation, define arguments and run the analysis needed to create the maps.
+
 ```{r var, eval=FALSE}
 # function documentation and argument definition
 help(kuenm_modvar)
 
 spname <- "Amblyomma_americanum"
 moddir <- "Final_models"
+swd <- FALSE
 format <- "asc"
 replicated <- TRUE
 curpatt <- "current"
@@ -68,10 +77,10 @@ projected <- TRUE
 emscepatt <- c("rcp45", "rcp85")
 gcms <- c("cc", "mi")
 ext_selected <- "E"
-dir_var <- "Variance_maps
+dir_var <- "Variance_maps"
 ```
 
-Now the analysis.
+Running the analysis.
 
 ```{r var1, eval=FALSE}
 # mapping the variance from distinct sources
@@ -81,7 +90,11 @@ kuenm_modvar(sp.name = spname, fmod.dir = moddir, is.swd = swd,
              ext.type = ext_selected, clim.models = gcms, out.dir = dir_var)
 ```
 
+<hr>
+
 ### Hierarchical partitioning of variance
+
+Hierarchical partitioning of the variance is a non-parametric statistical test that allow us to quantify the effect of distinct sources of variation on the total variance in our results (Cobos et al. 2019). The following chunks of code help to perform this analysis using functions of kuenm.   
 
 ```{r hierp, eval=FALSE}
 # function documentation and argument definition
@@ -100,10 +113,11 @@ kuenm_hierpart(sp.name= spname, fmod.dir = moddir, replicated = replicated,
                format = format, project = projected, current = curpatt,
                emi.scenarios = emscepatt, clim.models = gcms, 
                iterations = iterations, sample.size = sample_size,
-               ext.type = ext_selected, factors.col, out.dir = hpart_dir)
+               ext.type = ext_selected, out.dir = hpart_dir)
 
 ```
 
+<hr>
 
 ### MOP analysis
 
@@ -114,7 +128,6 @@ The mobility-oriented parity metric (MOP; Owens et al. 2013) allows to identify 
 help(kuenm_mmop)
 
 set <- "Set_4"
-swd <- FALSE
 percentage <- 10
 comp <- 2000
 parall <- TRUE
@@ -129,6 +142,8 @@ kuenm_mmop(G.var.dir = gvars, M.var.dir = mvars, is.swd = swd, sets.var = set,
            out.mop = outmop, percent = percentage, comp.each = comp, 
            parallel = parall)
 ```
+
+<hr>
 
 ### MOP agreement
 
@@ -147,6 +162,25 @@ Now the calculations.
 ```{r mopag1, eval=FALSE}
 # agreement of areas of extrapolation
 kuenm_mopagree(mop.dir = outmop, in.format = format1, out.format = format1, 
-               current = curpatt, emi.scenarios = emscepatt, clim.models = gcms,
+               current = curpatt, emi.scenarios = emscepatt, 
                out.dir = mopag_dir)
 ```
+
+<hr>
+
+<br>
+
+## References
+
+Alkishe, A., Cobos, M.E., Peterson, A.T. & Samy, A.M. (2020) Recognizing sources of uncertainty in disease vector ecological niche models: An example with the tick *Rhipicephalus sanguineus sensu lato*. Perspectives in Ecology and Conservation.
+
+Chevan, A. & Sutherland, M. (1991) Hierarchical partitioning. American Statistician 45, 90–96.
+
+Cobos, M.E., Osorio-Olvera, L. & Peterson, A.T. (2019) Assessment and representation of variability in ecological niche model predictions. bioRxiv. DOI: 10.1101/603100.
+
+Cobos, M.E., Peterson, A.T., Barve, N. & Osorio-Olvera, L. (2019) kuenm: An R package for detailed development of ecological niche models using Maxent. PeerJ 7, e6281.
+
+Diniz-Filho, J.A.F., Bini, L.M., Rangel, T.F., Loyola, R.D., Hof, C., Nogués-Bravo, D. & Araújo, M.B. (2009) Partitioning and mapping uncertainties in ensembles of forecasts of species turnover under climate change. Ecography 32, 897–906.
+
+Peterson, A.T., Cobos, M.E. & Jiménez‐García, D. (2018) Major challenges for correlational ecological niche model projections to future climate conditions. Annals of the New York Academy of Sciences 1429, 66–77.
+
