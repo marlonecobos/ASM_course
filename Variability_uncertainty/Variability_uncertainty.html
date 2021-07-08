@@ -7,7 +7,7 @@
 
         <meta name="author" content="Marlon E. Cobos" />
     
-        <meta name="date" content="2021-07-06" />
+        <meta name="date" content="2021-07-07" />
     
     <title>Exploring variability and uncertainty in ENM results</title>
 
@@ -191,22 +191,11 @@
     <div id="toc">
       <ul>
       <li><a href="#description">Description</a></li>
-      <li><a href="#setting-up-r">Setting up R</a>
-      <ul>
-      <li><a href="#initial-dependencies">Initial dependencies</a></li>
-      <li><a href="#r-pacakages-needed">R pacakages needed</a></li>
-      <li><a href="#working-directory">Working directory</a></li>
-      </ul></li>
-      <li><a href="#how-to-explore-uncertainty-and-variability-in-enm">How to explore uncertainty and variability in ENM</a>
-      <ul>
-      <li><a href="#data-required">Data required</a></li>
+      <li><a href="#r-pacakge-and-working-directory">R pacakge and working directory</a></li>
       <li><a href="#workflow-description">Workflow description</a></li>
-      </ul></li>
       <li><a href="#example-case">Example case</a>
       <ul>
-      <li><a href="#data">Data</a></li>
       <li><a href="#mop-analysis">MOP analysis</a></li>
-      <li><a href="#variability-withing-future-model-projections">Variability withing future model projections</a></li>
       <li><a href="#mapping-variance-from-distinct-sources">Mapping variance from distinct sources</a></li>
       <li><a href="#hierarchical-partitioning-of-variance">Hierarchical partitioning of variance</a></li>
       </ul></li>
@@ -214,7 +203,7 @@
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Marlon E. Cobos</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-07-06</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-07-07</p>
           </div>
    </div>
      
@@ -226,63 +215,55 @@
 <div id="main">
 <div id="description" class="section level2">
 <h2>Description</h2>
-<p>This script is a guide to.</p>
-<p>The data that we would use can be downloaded following this <strong>link</strong>.</p>
+<p>This is a guide to assess and map variability and uncertainty in results from ecological niche modeling (ENM) exercises. We use the <a href="https://github.com/marlonecobos/kuenm#kuenm-an-r-package-for-detailed-development-of-maxent-ecological-niche-models" target="_blank">kuenm</a> package to perform analyses using results from final model and projections. The guide is focused on the functions of the package dedicated to post-modeling analysis.</p>
+<p>The data and results required to perform the analyses in this guide can be obtained by following the <strong>kuenm_practice guide</strong>, which can be in the GitHub repository <a href="https://github.com/marlonecobos/ASM_course" target="_blank">ASM Course</a>.</p>
 <p><br></p>
 </div>
-<div id="setting-up-r" class="section level2">
-<h2>Setting up R</h2>
-<div id="initial-dependencies" class="section level3">
-<h3>Initial dependencies</h3>
-</div>
-<div id="r-pacakages-needed" class="section level3">
-<h3>R pacakages needed</h3>
-<p>The following lines of code help to install the R package needed to perform ENM and all relevant dependencies.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># R package to install packages from GitHub</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span>
+<div id="r-pacakge-and-working-directory" class="section level2">
+<h2>R pacakge and working directory</h2>
+<p>Now we can load the package needed and set the working directory.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kuenm)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># R package to run dispersal simulations</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;marlonecobos/kuenm&quot;</span>)</span></code></pre></div>
-<p>Now we can load the packages needed to read the data we will use and run the simulations.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading packages</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(raster)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kuenm)</span></code></pre></div>
-</div>
-<div id="working-directory" class="section level3">
-<h3>Working directory</h3>
-<p>The simulations will be run using data from a local directory, and results will also be written in the this directory. For these reasons, it is important to define a working directory that suits your needs.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># please change &#39;YOUR/DIRECTORY&#39; as needed</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;YOUR/DIRECTORY&quot;</span>)</span></code></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># set working directory, please change &#39;YOUR/DIRECTORY&#39; as needed</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;YOUR/DIRECTORY&quot;</span>)</span></code></pre></div>
 <p><br></p>
 </div>
-</div>
-<div id="how-to-explore-uncertainty-and-variability-in-enm" class="section level2">
-<h2>How to explore uncertainty and variability in ENM</h2>
-<div id="data-required" class="section level3">
-<h3>Data required</h3>
-</div>
-<div id="workflow-description" class="section level3">
-<h3>Workflow description</h3>
+<div id="workflow-description" class="section level2">
+<h2>Workflow description</h2>
 <p>The information required to run this type of simulation is related to</p>
 <p><br></p>
 </div>
-</div>
 <div id="example-case" class="section level2">
 <h2>Example case</h2>
-<div id="data" class="section level3">
-<h3>Data</h3>
-</div>
 <div id="mop-analysis" class="section level3">
 <h3>MOP analysis</h3>
-</div>
-<div id="variability-withing-future-model-projections" class="section level3">
-<h3>Variability withing future model projections</h3>
+<p>The mobility-oriented parity metric (MOP; Owens et al. 2013) allows to identify levels of similarity between environmental conditions in the calibration area and other scenarios where models will be projected. The results obtained can be mapped to detect areas where conditions are completely different (non-analogous) to those in the calibration area (areas of strict extrapolation). Interpretations in areas of strict extrapolation must be done carefully as the results in those areas are the result of how models are extrapolating. The package kuenm contains tools to perform the MOP analysis for distinct scenarios. Let’s check the function documentation and defined the arguments.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(kuenm_mmop)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>set <span class="ot">&lt;-</span> <span class="st">&quot;Set_4&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>swd <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>percentage <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>parall <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>outmop <span class="ot">&lt;-</span> <span class="st">&quot;MOP_results&quot;</span></span></code></pre></div>
+<p>Now the analysis.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mop analysis for multiple scenarios</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kuenm_mmop</span>(<span class="at">G.var.dir =</span> gvars, <span class="at">M.var.dir =</span> mvars, <span class="at">is.swd =</span> swd, <span class="at">sets.var =</span> set, <span class="at">out.mop =</span> outmop,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">percent =</span> percentage, <span class="at">comp.each =</span> comp, <span class="at">parallel =</span> parall)</span></code></pre></div>
 </div>
 <div id="mapping-variance-from-distinct-sources" class="section level3">
 <h3>Mapping variance from distinct sources</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span></code></pre></div>
+<p>Now the analysis.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mop analysis for multiple scenarios</span></span></code></pre></div>
 </div>
 <div id="hierarchical-partitioning-of-variance" class="section level3">
 <h3>Hierarchical partitioning of variance</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation and argument definition</span></span></code></pre></div>
+<p>Now the analysis.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mop analysis for multiple scenarios</span></span></code></pre></div>
 </div>
 </div>
 </div>

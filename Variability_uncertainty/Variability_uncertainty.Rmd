@@ -25,55 +25,27 @@ knitr::opts_knit$set(width = 100)
 
 ## Description
 
-This script is a guide to. 
+This is a guide to assess and map variability and uncertainty in results from ecological niche modeling (ENM) exercises. We use the <a href="https://github.com/marlonecobos/kuenm#kuenm-an-r-package-for-detailed-development-of-maxent-ecological-niche-models" target="_blank">kuenm</a> package to perform analyses using results from final model and projections. The guide is focused on the functions of the package dedicated to post-modeling analysis.  
 
-The data that we would use can be downloaded following this **link**. 
+The data and results required to perform the analyses in this guide can be obtained by following the **kuenm_practice guide**, which can be in the GitHub repository <a href="https://github.com/marlonecobos/ASM_course" target="_blank">ASM Course</a>.
 
 <br>
 
-## Setting up R
+## R pacakge and working directory
 
-### Initial dependencies
+Now we can load the package needed and set the working directory.
 
-
-
-### R pacakages needed
-
-The following lines of code help to install the R package needed to perform ENM and all relevant dependencies.  
-
-```{r install, eval=FALSE}
-# R package to install packages from GitHub
-install.packages("remotes")
-
-# R package to run dispersal simulations
-remotes::install_github("marlonecobos/kuenm")
-```
-
-Now we can load the packages needed to read the data we will use and run the simulations.
-
-```{r load, message=FALSE}
+```{r load_wd, eval=FALSE}
 # loading packages
-library(raster)
 library(kuenm)
-```
 
-
-### Working directory 
-
-The simulations will be run using data from a local directory, and results will also be written in the this directory. For these reasons, it is important to define a working directory that suits your needs.
-
-```{r wd, eval=FALSE}
-# please change "YOUR/DIRECTORY" as needed
+# set working directory, please change "YOUR/DIRECTORY" as needed
 setwd("YOUR/DIRECTORY")
 ```
 
 <br>
 
-## How to explore uncertainty and variability in ENM
-
-### Data required
-
-### Workflow description
+## Workflow description
 
 The information required to run this type of simulation is related to  
 
@@ -81,13 +53,100 @@ The information required to run this type of simulation is related to
 
 ## Example case
 
-### Data
-
-### MOP analysis
-
-### Variability withing future model projections
-
 ### Mapping variance from distinct sources
+
+```{r var, eval=FALSE}
+# function documentation and argument definition
+help(kuenm_modvar)
+
+spname <- "Amblyomma_americanum"
+moddir <- "Final_models"
+format <- "asc"
+replicated <- TRUE
+curpatt <- "current"
+projected <- TRUE
+emscepatt <- c("rcp45", "rcp85")
+gcms <- c("cc", "mi")
+ext_selected <- "E"
+dir_var <- "Variance_maps
+```
+
+Now the analysis.
+
+```{r var1, eval=FALSE}
+# mapping the variance from distinct sources
+kuenm_modvar(sp.name = spname, fmod.dir = moddir, is.swd = swd, 
+             replicated = replicated, format = format, project = projected, 
+             current = curpatt, emi.scenarios = emscepatt, 
+             ext.type = ext_selected, clim.models = gcms, out.dir = dir_var)
+```
 
 ### Hierarchical partitioning of variance
 
+```{r hierp, eval=FALSE}
+# function documentation and argument definition
+help(kuenm_hierpart)
+
+iterations <- 100
+sample_size <- 1000
+hpart_dir <- "Hierarchical_partitioning"
+```
+
+Let's run the analysis.
+
+```{r hierp1, eval=FALSE}
+# mop analysis for multiple scenarios
+kuenm_hierpart(sp.name= spname, fmod.dir = moddir, replicated = replicated, 
+               format = format, project = projected, current = curpatt,
+               emi.scenarios = emscepatt, clim.models = gcms, 
+               iterations = iterations, sample.size = sample_size,
+               ext.type = ext_selected, factors.col, out.dir = hpart_dir)
+
+```
+
+
+### MOP analysis
+
+The mobility-oriented parity metric (MOP; Owens et al. 2013) allows to identify levels of similarity between environmental conditions in the calibration area and other scenarios where models will be projected. The results obtained can be mapped to detect areas where conditions are completely different (non-analogous) to those in the calibration area (areas of strict extrapolation). Interpretations in areas of strict extrapolation must be done carefully as the results in those areas are the result of how models are extrapolating. The package kuenm contains tools to perform the MOP analysis for distinct scenarios. 
+
+```{r mop, eval=FALSE}
+# function documentation and argument definition
+help(kuenm_mmop)
+
+set <- "Set_4"
+swd <- FALSE
+percentage <- 10
+comp <- 2000
+parall <- TRUE
+outmop <- "MOP_results"
+```
+
+Now the analysis.
+
+```{r mop1, eval=FALSE}
+# mop analysis for multiple scenarios
+kuenm_mmop(G.var.dir = gvars, M.var.dir = mvars, is.swd = swd, sets.var = set, 
+           out.mop = outmop, percent = percentage, comp.each = comp, 
+           parallel = parall)
+```
+
+### MOP agreement
+
+When multiple scenarios and GCMs are used, it may be a good idea to calculate the agreement of areas detected to be non-analogous among those GCMs for every scenario in question. The following lines of code will help to identify such areas of agreement.
+
+```{r mopag, eval=FALSE}
+# function documentation and argument definition
+help(kuenm_mopagree)
+
+format1 <- "GTiff"
+mopag_dir <- "MOP_agreement"
+```
+
+Now the calculations.
+
+```{r mopag1, eval=FALSE}
+# agreement of areas of extrapolation
+kuenm_mopagree(mop.dir = outmop, in.format = format1, out.format = format1, 
+               current = curpatt, emi.scenarios = emscepatt, clim.models = gcms,
+               out.dir = mopag_dir)
+```
