@@ -89,7 +89,7 @@ Data needed to replicate these analyses are:
 
 ### Workflow description
 
-Once the data to create ENMs is properly prepared, ecological niche modeling starts with the process of model calibration. During calibration several candidate models are tested under user defined criteria of performance and the best performing model or models are selected. Final models are then created using the parameterizations of selected models. If needed, these models are projected to other scenarios (different areas or times). The workflow ends in the calculation of general statistics of final models obtained with multiple parameterizations (e.g., median and range). 
+Once the data to create ENMs is properly prepared, ecological niche modeling starts with the process of model calibration. During calibration several candidate models are tested under user defined criteria of performance and the best performing model or models are selected. Final models are then created using the parameterizations of selected models. If needed, these models are projected to other scenarios (different areas or times). The workflow continues with the calculation of general statistics of final models obtained with multiple parameterizations (e.g., median and range). Finally, using the statistics previously calculated, changes in suitable areas can be detected when comparing current and future projections.
 
 <hr>
 
