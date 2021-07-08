@@ -52,7 +52,7 @@ install.packages("remotes")
 remotes::install_github("marlonecobos/kuenm")
 ```
 
-Now we can load the packages needed to read the data we will use and run the simulations.
+Now we can load the packages needed.
 
 ```{r load, message=FALSE}
 # loading packages
