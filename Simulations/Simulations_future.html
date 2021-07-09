@@ -7,7 +7,7 @@
 
         <meta name="author" content="Marlon E. Cobos" />
     
-        <meta name="date" content="2021-07-05" />
+        <meta name="date" content="2021-07-09" />
     
     <title>Simulations to explore possible futures</title>
 
@@ -196,26 +196,21 @@
       <li><a href="#r-pacakages-needed">R pacakages needed</a></li>
       <li><a href="#working-directory">Working directory</a></li>
       </ul></li>
-      <li><a href="#understanding-simulations">Understanding simulations</a>
-      <ul>
-      <li><a href="#tool-used-to-run-simulations">Tool used to run simulations</a></li>
-      <li><a href="#data-required">Data required</a></li>
-      <li><a href="#dispersal-information">Dispersal information</a></li>
-      <li><a href="#other-parameters">Other parameters</a></li>
-      </ul></li>
       <li><a href="#example-case">Example case</a>
       <ul>
       <li><a href="#getting-the-data">Getting the data</a></li>
+      <li><a href="#final-preparation-of-data">Final preparation of data</a></li>
       <li><a href="#defining-simulation-parameters">Defining simulation parameters</a></li>
       <li><a href="#running-simulations">Running simulations</a></li>
       <li><a href="#using-current-and-future-scenarios">Using current and future scenarios</a></li>
       <li><a href="#changing-parameters-for-further-explorations">Changing parameters for further explorations</a></li>
       </ul></li>
+      <li><a href="#references">References</a></li>
       </ul>
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Marlon E. Cobos</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-07-05</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-07-09</p>
           </div>
    </div>
      
@@ -227,8 +222,8 @@
 <div id="main">
 <div id="description" class="section level2">
 <h2>Description</h2>
-<p>This script is a guide to run dispersal simulations to explore possible future scenarios of distributional changes for species.</p>
-<p>The data that we would use can be downloaded following this <strong>link</strong>.</p>
+<p>This document is a guide to run dispersal simulations to explore possible future scenarios of distributional changes for species. Simulations are run using occurrence data and raster layers that represent levels of suitability for a species in current and if future scenarios. The package to be used to run simulations is <a href="https://github.com/marlonecobos/grinnell" target="_blank">grinnell</a>.</p>
+<p>All data to be used can be obtained using the R code presented below. All data and code related to this topic is stored in the GitHub repository <a href="https://github.com/marlonecobos/ASM_course" target="_blank">ASM Course</a>.</p>
 <p><br></p>
 </div>
 <div id="setting-up-r" class="section level2">
@@ -251,23 +246,7 @@
 <p>The simulations will be run using data from a local directory, and results will also be written in the this directory. For these reasons, it is important to define a working directory that suits your needs.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># please change &#39;YOUR/DIRECTORY&#39; as needed</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;YOUR/DIRECTORY&quot;</span>)</span></code></pre></div>
-<p><br></p>
-</div>
-</div>
-<div id="understanding-simulations" class="section level2">
-<h2>Understanding simulations</h2>
-<div id="tool-used-to-run-simulations" class="section level3">
-<h3>Tool used to run simulations</h3>
-</div>
-<div id="data-required" class="section level3">
-<h3>Data required</h3>
-</div>
-<div id="dispersal-information" class="section level3">
-<h3>Dispersal information</h3>
-<p>The information required to run this type of simulation is related to</p>
-</div>
-<div id="other-parameters" class="section level3">
-<h3>Other parameters</h3>
+<hr>
 <p><br></p>
 </div>
 </div>
@@ -275,22 +254,175 @@
 <h2>Example case</h2>
 <div id="getting-the-data" class="section level3">
 <h3>Getting the data</h3>
+<p>The following lines of code help to download and unzip the data that will be used in the example. Change “YOUR/DIRECTORY” as needed.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># where to get it and where to save it (change &#39;YOUR/DIRECTORY&#39;)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>url_data <span class="ot">&lt;-</span> <span class="st">&quot;https://github.com/marlonecobos/ASM_course/raw/main/Simulations/Data.zip&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>data_file <span class="ot">&lt;-</span> <span class="st">&quot;Data.zip&quot;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># download data</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url =</span> url_data, <span class="at">destfile =</span> data_file, <span class="at">mode =</span> <span class="st">&quot;wb&quot;</span>, <span class="at">quiet =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># files and directory to unzip</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>ex_dir <span class="ot">&lt;-</span> <span class="st">&quot;.&quot;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># unzipping the data</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span>(<span class="at">zipfile =</span> data_file, <span class="at">exdir =</span> ex_dir)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># check what is in your working directory</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">dir</span>()</span></code></pre></div>
+<hr>
+</div>
+<div id="final-preparation-of-data" class="section level3">
+<h3>Final preparation of data</h3>
+<p>The data downloaded before contains species records and layers of suitability obtained from an ecological niche modeling exercise. The layers represent current suitability and suitability for four distinct scenarios (2 GCMs x 2RCPs) for the year 2050. However, one of the key aspects of the simulation is that they recognize areas with values of suitability equal to zero. Those areas are crucial to identify limits to the dispersal process derived from the ability of a species to colonize only areas with suitability values above zero. For these reasons, the first step is to identify a threshold value for suitability and transform all values in the layers below that threshold to zero. Note that in this example, all values in the layers above that threshold will remain unchanged. The following lins of code help to perform the preparations needed.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## the data</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>occs <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;aame.csv&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>current <span class="ot">&lt;-</span> <span class="fu">raster</span>(<span class="st">&quot;current_med.tif&quot;</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>cc_rcp45 <span class="ot">&lt;-</span> <span class="fu">raster</span>(<span class="st">&quot;cc_rcp45_med.tif&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>cc_rcp85 <span class="ot">&lt;-</span> <span class="fu">raster</span>(<span class="st">&quot;cc_rcp85_med.tif&quot;</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>mi_rcp45 <span class="ot">&lt;-</span> <span class="fu">raster</span>(<span class="st">&quot;mi_rcp45_med.tif&quot;</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>mi_rcp85 <span class="ot">&lt;-</span> <span class="fu">raster</span>(<span class="st">&quot;mi_rcp85_med.tif&quot;</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="do">## finding threshold</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">extract</span>(current, occs[, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>threshold_level <span class="ot">&lt;-</span> <span class="fu">ceiling</span>(<span class="dv">5</span> <span class="sc">*</span> <span class="fu">length</span>(vals)<span class="sc">/</span><span class="dv">100</span>) <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>threshold_value <span class="ot">&lt;-</span> vals[threshold_level]</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="do">## transforming to zero all values of suitability &lt; threshold_value</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>current[current[] <span class="sc">&lt;</span> threshold_value] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>cc_rcp45[cc_rcp45[] <span class="sc">&lt;</span> threshold_value] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>cc_rcp85[cc_rcp85[] <span class="sc">&lt;</span> threshold_value] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>mi_rcp45[mi_rcp45[] <span class="sc">&lt;</span> threshold_value] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>mi_rcp85[mi_rcp85[] <span class="sc">&lt;</span> threshold_value] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="do">## writing back suitability layers to directory</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="fu">writeRaster</span>(current, <span class="at">filename =</span> <span class="st">&quot;current_fix.tif&quot;</span>, <span class="at">format =</span> <span class="st">&quot;GTiff&quot;</span>)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="fu">writeRaster</span>(cc_rcp45, <span class="at">filename =</span> <span class="st">&quot;cc_rcp45_fix.tif&quot;</span>, <span class="at">format =</span> <span class="st">&quot;GTiff&quot;</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="fu">writeRaster</span>(cc_rcp85, <span class="at">filename =</span> <span class="st">&quot;cc_rcp85_fix.tif&quot;</span>, <span class="at">format =</span> <span class="st">&quot;GTiff&quot;</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="fu">writeRaster</span>(mi_rcp45, <span class="at">filename =</span> <span class="st">&quot;mi_rcp45_fix.tif&quot;</span>, <span class="at">format =</span> <span class="st">&quot;GTiff&quot;</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="fu">writeRaster</span>(mi_rcp85, <span class="at">filename =</span> <span class="st">&quot;mi_rcp85_fix.tif&quot;</span>, <span class="at">format =</span> <span class="st">&quot;GTiff&quot;</span>)</span></code></pre></div>
+<hr>
 </div>
 <div id="defining-simulation-parameters" class="section level3">
 <h3>Defining simulation parameters</h3>
+<p>Let’s start by checking the docuentation of the function from grinnell that we will use for the simulations. After that we can also define some of the most important parameters.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function documentation</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(forward_simulation)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># general arguments (occs contains the records and it was defined before)</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>suit_current <span class="ot">&lt;-</span> <span class="st">&quot;current_fix.tif&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>kernel <span class="ot">&lt;-</span> <span class="st">&quot;normal&quot;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>kernel_sd <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>dispersers <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>events <span class="ot">&lt;-</span> <span class="dv">15</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>reps <span class="ot">&lt;-</span> <span class="dv">10</span></span></code></pre></div>
+<hr>
 </div>
 <div id="running-simulations" class="section level3">
 <h3>Running simulations</h3>
+<p>Simulations will be run differently to understand the effects of using distinct types of data, and changing some of he parameters.</p>
 <div id="using-a-unique-scenario" class="section level4">
 <h4>Using a unique scenario</h4>
+<p>First, let’s run the simulation using only the current layer of suitability. This means that suitability won’t change in our simulations.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># output directory</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>out_dir0 <span class="ot">&lt;-</span> <span class="st">&quot;Disp_sim_current&quot;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>c_s <span class="ot">&lt;-</span> <span class="fu">forward_simulation</span>(<span class="at">suit_layer =</span> suit_current, <span class="at">data =</span> occs, <span class="at">dispersal_kernel =</span> kernel,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">kernel_spread =</span> kernel_sd, <span class="at">max_dispersers =</span> dispersers, <span class="at">dispersal_events =</span> events,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">replicates =</span> reps, <span class="at">output_directory =</span> out_dir0)</span></code></pre></div>
+<hr>
 </div>
 </div>
 <div id="using-current-and-future-scenarios" class="section level3">
 <h3>Using current and future scenarios</h3>
+<p>Now, four examples will be run to explore the difference in the results that can be obtained if distinct future scenarios are used to run simulations. In these examples suitability will change during the simulation processes and those changes will affect all results.</p>
+<div id="cc-gcm-and-rcp-45" class="section level4">
+<h4>CC GCM and RCP 45</h4>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># future suitability layer and output directory</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>suit_future <span class="ot">&lt;-</span> <span class="st">&quot;cc_rcp45_fix.tif&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>out_dir <span class="ot">&lt;-</span> <span class="st">&quot;Disp_sim_cc_rcp45&quot;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># running simulations</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>f_s <span class="ot">&lt;-</span> <span class="fu">forward_simulation</span>(<span class="at">suit_layer =</span> suit_current, <span class="at">data =</span> occs, <span class="at">suit_forward =</span> suit_future,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_kernel =</span> kernel, <span class="at">kernel_spread =</span> kernel_sd, <span class="at">max_dispersers =</span> dispersers,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_events =</span> events, <span class="at">replicates =</span> reps, <span class="at">output_directory =</span> out_dir)</span></code></pre></div>
+<hr>
+</div>
+<div id="cc-gcm-and-rcp-85" class="section level4">
+<h4>CC GCM and RCP 85</h4>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># future suitability layer and output directory</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>suit_future1 <span class="ot">&lt;-</span> <span class="st">&quot;cc_rcp85_fix.tif&quot;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>out_dir1 <span class="ot">&lt;-</span> <span class="st">&quot;Disp_sim_cc_rcp85&quot;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># running simulations</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>f_s1 <span class="ot">&lt;-</span> <span class="fu">forward_simulation</span>(<span class="at">suit_layer =</span> suit_current, <span class="at">data =</span> occs, <span class="at">suit_forward =</span> suit_future1,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_kernel =</span> kernel, <span class="at">kernel_spread =</span> kernel_sd, <span class="at">max_dispersers =</span> dispersers,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_events =</span> events, <span class="at">replicates =</span> reps, <span class="at">output_directory =</span> out_dir1)</span></code></pre></div>
+<hr>
+</div>
+<div id="mi-gcm-and-rcp-45" class="section level4">
+<h4>MI GCM and RCP 45</h4>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># future suitability layer and output directory</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>suit_future2 <span class="ot">&lt;-</span> <span class="st">&quot;mi_rcp45_fix.tif&quot;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>out_dir2 <span class="ot">&lt;-</span> <span class="st">&quot;Disp_sim_mi_rcp45&quot;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># running simulations</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>f_s2 <span class="ot">&lt;-</span> <span class="fu">forward_simulation</span>(<span class="at">suit_layer =</span> suit_current, <span class="at">data =</span> occs, <span class="at">suit_forward =</span> suit_future2,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_kernel =</span> kernel, <span class="at">kernel_spread =</span> kernel_sd, <span class="at">max_dispersers =</span> dispersers,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_events =</span> events, <span class="at">replicates =</span> reps, <span class="at">output_directory =</span> out_dir2)</span></code></pre></div>
+<hr>
+</div>
+<div id="mi-gcm-and-rcp-85" class="section level4">
+<h4>MI GCM and RCP 85</h4>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># future suitability layer and output directory</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>suit_future3 <span class="ot">&lt;-</span> <span class="st">&quot;mi_rcp85_fix.tif&quot;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>out_dir3 <span class="ot">&lt;-</span> <span class="st">&quot;Disp_sim_mi_rcp85&quot;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># running simulations</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>f_s3 <span class="ot">&lt;-</span> <span class="fu">forward_simulation</span>(<span class="at">suit_layer =</span> suit_current, <span class="at">data =</span> occs, <span class="at">suit_forward =</span> suit_future3,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_kernel =</span> kernel, <span class="at">kernel_spread =</span> kernel_sd, <span class="at">max_dispersers =</span> dispersers,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_events =</span> events, <span class="at">replicates =</span> reps, <span class="at">output_directory =</span> out_dir3)</span></code></pre></div>
+<hr>
+</div>
 </div>
 <div id="changing-parameters-for-further-explorations" class="section level3">
 <h3>Changing parameters for further explorations</h3>
+<p>Other parameters of the function can be changed to explore their effects on simulation results. Below, we will explore the effect of reducing the proportion of colonized cells that produce new dispersers, and the effect of making the sampling of colonized cells to depend on suitability values. In the later example, colonized cells with high values of suitability will produce dispersers more commonly than those cells with lower suitability.</p>
+<div id="reducing-the-number-of-colonized-cells-to-produce-dispersers" class="section level4">
+<h4>Reducing the number of colonized cells to produce dispersers</h4>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># new argument and output directory</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>prop_col_2disperse <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>out_dir4 <span class="ot">&lt;-</span> <span class="st">&quot;Disp_sim_mi_rcp45_pcol03&quot;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># running simulations</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>f_s4 <span class="ot">&lt;-</span> <span class="fu">forward_simulation</span>(<span class="at">suit_layer =</span> suit_current, <span class="at">data =</span> occs, <span class="at">suit_forward =</span> suit_future2,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_kernel =</span> kernel, <span class="at">kernel_spread =</span> kernel_sd, <span class="at">max_dispersers =</span> dispersers,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_events =</span> events, <span class="at">replicates =</span> reps, <span class="at">proportion_to_disperse =</span> prop_col_2disperse,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">output_directory =</span> out_dir4)</span></code></pre></div>
+<hr>
 </div>
+<div id="sampling-colonized-cells-based-on-suitability" class="section level4">
+<h4>Sampling colonized cells based on suitability</h4>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># new argument and output directory</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>sample_rule <span class="ot">&lt;-</span> <span class="st">&quot;suitability&quot;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>out_dir5 <span class="ot">&lt;-</span> <span class="st">&quot;Disp_sim_mi_rcp45_pcol03_suita_samp&quot;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># running simulations</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>f_s5 <span class="ot">&lt;-</span> <span class="fu">forward_simulation</span>(<span class="at">suit_layer =</span> suit_current, <span class="at">data =</span> occs, <span class="at">suit_forward =</span> suit_future2,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_kernel =</span> kernel, <span class="at">kernel_spread =</span> kernel_sd, <span class="at">max_dispersers =</span> dispersers,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_events =</span> events, <span class="at">replicates =</span> reps, <span class="at">proportion_to_disperse =</span> prop_col_2disperse,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">sampling_rule =</span> sample_rule, <span class="at">output_directory =</span> out_dir5)</span></code></pre></div>
+<hr>
+<p><br></p>
+</div>
+</div>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Clobert, J., Baguette, M., Benton, T.G. &amp; Bullock, J. eds. (2012) Dispersal Ecology and Evolution, Croydon, UK: Oxford University Press.</p>
+<p>Machado-Stredel, F., Cobos, M.E. &amp; Peterson, A.T. (In press) A simulation-based method for identifying accessible areas as calibration areas for ecological niche models and species distribution models. Frontiers of Biogeography.</p>
+<p>Machado-Stredel, F., Cobos, M.E. &amp; Peterson, A.T. (2020) Tools for species dispersal simulations based on ecological niches. R package, <a href="https://github.com/fmachados/grinnell" class="uri">https://github.com/fmachados/grinnell</a></p>
 </div>
 </div>
 

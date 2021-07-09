@@ -25,9 +25,9 @@ knitr::opts_knit$set(width = 100)
 
 ## Description
 
-This script is a guide to run dispersal simulations to explore possible future scenarios of distributional changes for species. 
+This document is a guide to run dispersal simulations to explore possible future scenarios of distributional changes for species. Simulations are run using occurrence data and raster layers that represent levels of suitability for a species in current and if future scenarios. The package to be used to run simulations is <a href="https://github.com/marlonecobos/grinnell" target="_blank">grinnell</a>. 
 
-The data that we would use can be downloaded following this **link**. 
+All data to be used can be obtained using the R code presented below. All data and code related to this topic is stored in the GitHub repository <a href="https://github.com/marlonecobos/ASM_course" target="_blank">ASM Course</a>.
 
 <br>
 
@@ -63,19 +63,7 @@ The simulations will be run using data from a local directory, and results will 
 setwd("YOUR/DIRECTORY")
 ```
 
-<br>
-
-## Understanding simulations
-
-### Tool used to run simulations
-
-### Data required
-
-### Dispersal information
-
-The information required to run this type of simulation is related to  
-
-### Other parameters
+<hr>
 
 <br>
 
@@ -83,13 +71,223 @@ The information required to run this type of simulation is related to
 
 ### Getting the data
 
+The following lines of code help to download and unzip the data that will be used in the example. Change "YOUR/DIRECTORY" as needed. 
+
+```{r get_data, eval=FALSE}
+# where to get it and where to save it (change "YOUR/DIRECTORY")
+url_data <- "https://github.com/marlonecobos/ASM_course/raw/main/Simulations/Data.zip"
+data_file <- "Data.zip"
+
+# download data
+download.file(url = url_data, destfile = data_file, mode = "wb", quiet = FALSE)
+
+# files and directory to unzip
+ex_dir <- "."
+
+# unzipping the data
+unzip(zipfile = data_file, exdir = ex_dir)
+
+# check what is in your working directory
+dir() 
+```
+
+<hr>
+
+### Final preparation of data
+
+The data downloaded before contains species records and layers of suitability obtained from an ecological niche modeling exercise. The layers represent current suitability and suitability for four distinct scenarios (2 GCMs x 2RCPs) for the year 2050. However, one of the key aspects of the simulation is that they recognize areas with values of suitability equal to zero. Those areas are crucial to identify limits to the dispersal process derived from the ability of a species to colonize only areas with suitability values above zero. For these reasons, the first step is to identify a threshold value for suitability and transform all values in the layers below that threshold to zero. Note that in this example, all values in the layers above that threshold will remain unchanged. The following lins of code help to perform the preparations needed. 
+
+```{r data_prep, eval=FALSE}
+## the data
+occs <- read.csv("aame.csv")
+
+current <- raster("current_med.tif")
+cc_rcp45 <- raster("cc_rcp45_med.tif")
+cc_rcp85 <- raster("cc_rcp85_med.tif")
+mi_rcp45 <- raster("mi_rcp45_med.tif")
+mi_rcp85 <- raster("mi_rcp85_med.tif")
+
+## finding threshold
+vals <- sort(extract(current, occs[, 2:3]))
+threshold_level <- ceiling(5 * length(vals) / 100) + 1
+threshold_value <- vals[threshold_level]
+
+## transforming to zero all values of suitability < threshold_value
+current[current[] < threshold_value] <- 0
+cc_rcp45[cc_rcp45[] < threshold_value] <- 0
+cc_rcp85[cc_rcp85[] < threshold_value] <- 0
+mi_rcp45[mi_rcp45[] < threshold_value] <- 0
+mi_rcp85[mi_rcp85[] < threshold_value] <- 0
+
+## writing back suitability layers to directory
+writeRaster(current, filename = "current_fix.tif", format = "GTiff")
+writeRaster(cc_rcp45, filename = "cc_rcp45_fix.tif", format = "GTiff")
+writeRaster(cc_rcp85, filename = "cc_rcp85_fix.tif", format = "GTiff")
+writeRaster(mi_rcp45, filename = "mi_rcp45_fix.tif", format = "GTiff")
+writeRaster(mi_rcp85, filename = "mi_rcp85_fix.tif", format = "GTiff")
+
+```
+
+<hr>
+
 ### Defining simulation parameters
+
+Let's start by checking the docuentation of the function from grinnell that we will use for the simulations. After that we can also define some of the most important parameters.
+
+```{r simpara, eval=FALSE}
+# function documentation
+help(forward_simulation)
+
+# general arguments (occs contains the records and it was defined before)
+suit_current <- "current_fix.tif"
+kernel <- "normal"
+kernel_sd <- 2
+dispersers <- 2
+events <- 15
+reps <- 10
+```
+
+<hr>
 
 ### Running simulations
 
+Simulations will be run differently to understand the effects of using distinct types of data, and changing some of he parameters. 
+
 #### Using a unique scenario
+
+First, let's run the simulation using only the current layer of suitability. This means that suitability won't change in  our simulations.
+
+```{r curr, eval=FALSE}
+# output directory
+out_dir0 <- "Disp_sim_current"
+
+c_s <- forward_simulation(suit_layer = suit_current, data = occs,
+                          dispersal_kernel = kernel, kernel_spread = kernel_sd,
+                          max_dispersers = dispersers, dispersal_events = events,
+                          replicates = reps, output_directory = out_dir0)
+```
+
+<hr>
 
 ### Using current and future scenarios
 
+Now, four examples will be run to explore the difference in the results that can be obtained if distinct future scenarios are used to run simulations. In these examples suitability will change during the simulation processes and those changes will affect all results.
+
+#### CC GCM and RCP 45
+
+```{r cc45, eval=FALSE}
+# future suitability layer and output directory
+suit_future <- "cc_rcp45_fix.tif"
+out_dir <- "Disp_sim_cc_rcp45"
+
+# running simulations
+f_s <- forward_simulation(suit_layer = suit_current, data = occs,
+                          suit_forward = suit_future, dispersal_kernel = kernel, 
+                          kernel_spread = kernel_sd, max_dispersers = dispersers,
+                          dispersal_events = events, replicates = reps,
+                          output_directory = out_dir)
+```
+
+<hr>
+
+#### CC GCM and RCP 85
+
+```{r cc85, eval=FALSE}
+# future suitability layer and output directory
+suit_future1 <- "cc_rcp85_fix.tif"
+out_dir1 <- "Disp_sim_cc_rcp85"
+
+# running simulations
+f_s1 <- forward_simulation(suit_layer = suit_current, data = occs,
+                           suit_forward = suit_future1, dispersal_kernel = kernel, 
+                           kernel_spread = kernel_sd, max_dispersers = dispersers,
+                           dispersal_events = events, replicates = reps,
+                           output_directory = out_dir1)
+```
+
+<hr>
+
+#### MI GCM and RCP 45
+
+```{r mi45, eval=FALSE}
+# future suitability layer and output directory
+suit_future2 <- "mi_rcp45_fix.tif"
+out_dir2 <- "Disp_sim_mi_rcp45"
+
+# running simulations
+f_s2 <- forward_simulation(suit_layer = suit_current, data = occs,
+                           suit_forward = suit_future2, dispersal_kernel = kernel, 
+                           kernel_spread = kernel_sd, max_dispersers = dispersers,
+                           dispersal_events = events, replicates = reps,
+                           output_directory = out_dir2)
+```
+
+<hr>
+
+#### MI GCM and RCP 85
+
+```{r mi85, eval=FALSE}
+# future suitability layer and output directory
+suit_future3 <- "mi_rcp85_fix.tif"
+out_dir3 <- "Disp_sim_mi_rcp85"
+
+# running simulations
+f_s3 <- forward_simulation(suit_layer = suit_current, data = occs,
+                           suit_forward = suit_future3, dispersal_kernel = kernel, 
+                           kernel_spread = kernel_sd, max_dispersers = dispersers,
+                           dispersal_events = events, replicates = reps,
+                           output_directory = out_dir3)
+```
+
+<hr>
+
 ### Changing parameters for further explorations
 
+Other parameters of the function can be changed to explore their effects on simulation results. Below, we will explore the effect of reducing the proportion of colonized cells that produce new dispersers, and the effect of making the sampling of colonized cells to depend on suitability values. In the later example, colonized cells with high values of suitability will produce dispersers more commonly than those cells with lower suitability.   
+
+#### Reducing the number of colonized cells to produce dispersers
+
+```{r colprop, eval=FALSE}
+# new argument and output directory
+prop_col_2disperse <- 0.3
+out_dir4 <- "Disp_sim_mi_rcp45_pcol03"
+
+# running simulations
+f_s4 <- forward_simulation(suit_layer = suit_current, data = occs,
+                           suit_forward = suit_future2, dispersal_kernel = kernel, 
+                           kernel_spread = kernel_sd, max_dispersers = dispersers,
+                           dispersal_events = events, replicates = reps,
+                           proportion_to_disperse = prop_col_2disperse,
+                           output_directory = out_dir4)
+```
+
+<hr>
+
+#### Sampling colonized cells based on suitability
+
+```{r colpropsam, eval=FALSE}
+# new argument and output directory
+sample_rule <- "suitability"
+out_dir5 <- "Disp_sim_mi_rcp45_pcol03_suita_samp"
+
+# running simulations
+f_s5 <- forward_simulation(suit_layer = suit_current, data = occs,
+                           suit_forward = suit_future2, dispersal_kernel = kernel, 
+                           kernel_spread = kernel_sd, max_dispersers = dispersers,
+                           dispersal_events = events, replicates = reps,
+                           proportion_to_disperse = prop_col_2disperse,
+                           sampling_rule = sample_rule, 
+                           output_directory = out_dir5)
+```
+
+<hr>
+
+<br>
+
+## References
+
+Clobert, J., Baguette, M., Benton, T.G. & Bullock, J. eds. (2012) Dispersal Ecology and Evolution, Croydon, UK: Oxford University Press.
+
+Machado-Stredel, F., Cobos, M.E. & Peterson, A.T. (In press) A simulation-based method for identifying accessible areas as calibration areas for ecological niche models and species distribution models. Frontiers of Biogeography.
+
+Machado-Stredel, F., Cobos, M.E. & Peterson, A.T. (2020) Tools for species dispersal simulations based on ecological niches. R package, https://github.com/fmachados/grinnell
