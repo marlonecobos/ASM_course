@@ -169,11 +169,11 @@ c_s <- forward_simulation(suit_layer = suit_current, data = occs,
 
 <hr>
 
-### Using current and future scenarios
+#### Using current and future scenarios
 
 Now, four examples will be run to explore the difference in the results that can be obtained if distinct future scenarios are used to run simulations. In these examples suitability will change during the simulation processes and those changes will affect all results.
 
-#### CC GCM and RCP 45
+##### CC GCM and RCP 45
 
 ```{r cc45, eval=FALSE}
 # future suitability layer and output directory
@@ -190,7 +190,7 @@ f_s <- forward_simulation(suit_layer = suit_current, data = occs,
 
 <hr>
 
-#### CC GCM and RCP 85
+##### CC GCM and RCP 85
 
 ```{r cc85, eval=FALSE}
 # future suitability layer and output directory
@@ -207,7 +207,7 @@ f_s1 <- forward_simulation(suit_layer = suit_current, data = occs,
 
 <hr>
 
-#### MI GCM and RCP 45
+##### MI GCM and RCP 45
 
 ```{r mi45, eval=FALSE}
 # future suitability layer and output directory
@@ -224,7 +224,7 @@ f_s2 <- forward_simulation(suit_layer = suit_current, data = occs,
 
 <hr>
 
-#### MI GCM and RCP 85
+##### MI GCM and RCP 85
 
 ```{r mi85, eval=FALSE}
 # future suitability layer and output directory

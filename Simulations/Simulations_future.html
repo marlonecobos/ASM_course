@@ -7,7 +7,7 @@
 
         <meta name="author" content="Marlon E. Cobos" />
     
-        <meta name="date" content="2021-07-09" />
+        <meta name="date" content="2021-07-23" />
     
     <title>Simulations to explore possible futures</title>
 
@@ -202,7 +202,6 @@
       <li><a href="#final-preparation-of-data">Final preparation of data</a></li>
       <li><a href="#defining-simulation-parameters">Defining simulation parameters</a></li>
       <li><a href="#running-simulations">Running simulations</a></li>
-      <li><a href="#using-current-and-future-scenarios">Using current and future scenarios</a></li>
       <li><a href="#changing-parameters-for-further-explorations">Changing parameters for further explorations</a></li>
       </ul></li>
       <li><a href="#references">References</a></li>
@@ -210,7 +209,7 @@
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Marlon E. Cobos</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-07-09</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-07-23</p>
           </div>
    </div>
      
@@ -333,12 +332,11 @@
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">replicates =</span> reps, <span class="at">output_directory =</span> out_dir0)</span></code></pre></div>
 <hr>
 </div>
-</div>
-<div id="using-current-and-future-scenarios" class="section level3">
-<h3>Using current and future scenarios</h3>
+<div id="using-current-and-future-scenarios" class="section level4">
+<h4>Using current and future scenarios</h4>
 <p>Now, four examples will be run to explore the difference in the results that can be obtained if distinct future scenarios are used to run simulations. In these examples suitability will change during the simulation processes and those changes will affect all results.</p>
-<div id="cc-gcm-and-rcp-45" class="section level4">
-<h4>CC GCM and RCP 45</h4>
+<div id="cc-gcm-and-rcp-45" class="section level5">
+<h5>CC GCM and RCP 45</h5>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># future suitability layer and output directory</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>suit_future <span class="ot">&lt;-</span> <span class="st">&quot;cc_rcp45_fix.tif&quot;</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>out_dir <span class="ot">&lt;-</span> <span class="st">&quot;Disp_sim_cc_rcp45&quot;</span></span>
@@ -349,8 +347,8 @@
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_events =</span> events, <span class="at">replicates =</span> reps, <span class="at">output_directory =</span> out_dir)</span></code></pre></div>
 <hr>
 </div>
-<div id="cc-gcm-and-rcp-85" class="section level4">
-<h4>CC GCM and RCP 85</h4>
+<div id="cc-gcm-and-rcp-85" class="section level5">
+<h5>CC GCM and RCP 85</h5>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># future suitability layer and output directory</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>suit_future1 <span class="ot">&lt;-</span> <span class="st">&quot;cc_rcp85_fix.tif&quot;</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>out_dir1 <span class="ot">&lt;-</span> <span class="st">&quot;Disp_sim_cc_rcp85&quot;</span></span>
@@ -361,8 +359,8 @@
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_events =</span> events, <span class="at">replicates =</span> reps, <span class="at">output_directory =</span> out_dir1)</span></code></pre></div>
 <hr>
 </div>
-<div id="mi-gcm-and-rcp-45" class="section level4">
-<h4>MI GCM and RCP 45</h4>
+<div id="mi-gcm-and-rcp-45" class="section level5">
+<h5>MI GCM and RCP 45</h5>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># future suitability layer and output directory</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>suit_future2 <span class="ot">&lt;-</span> <span class="st">&quot;mi_rcp45_fix.tif&quot;</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>out_dir2 <span class="ot">&lt;-</span> <span class="st">&quot;Disp_sim_mi_rcp45&quot;</span></span>
@@ -373,8 +371,8 @@
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_events =</span> events, <span class="at">replicates =</span> reps, <span class="at">output_directory =</span> out_dir2)</span></code></pre></div>
 <hr>
 </div>
-<div id="mi-gcm-and-rcp-85" class="section level4">
-<h4>MI GCM and RCP 85</h4>
+<div id="mi-gcm-and-rcp-85" class="section level5">
+<h5>MI GCM and RCP 85</h5>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># future suitability layer and output directory</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>suit_future3 <span class="ot">&lt;-</span> <span class="st">&quot;mi_rcp85_fix.tif&quot;</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>out_dir3 <span class="ot">&lt;-</span> <span class="st">&quot;Disp_sim_mi_rcp85&quot;</span></span>
@@ -384,6 +382,7 @@
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_kernel =</span> kernel, <span class="at">kernel_spread =</span> kernel_sd, <span class="at">max_dispersers =</span> dispersers,</span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dispersal_events =</span> events, <span class="at">replicates =</span> reps, <span class="at">output_directory =</span> out_dir3)</span></code></pre></div>
 <hr>
+</div>
 </div>
 </div>
 <div id="changing-parameters-for-further-explorations" class="section level3">
