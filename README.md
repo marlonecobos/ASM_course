@@ -4,7 +4,7 @@ Course mentors: A. Townsend Peterson, Abdelghafar Alkishe, Marlon E. Cobos, Dani
 
 Department of Ecology and Evolutionary Biology & Biodiversity Institute, University of Kansas, Lawrence, Kansas, United States.
 
-Repository maintainer: Marlon E. Cobos <manubio13@gmail.com>
+Repository maintainer: Marlon E. Cobos [E-mail](mailto:manubio13@gmail.com)
 
 License: <a href="https://github.com/marlonecobos/ASM_course/blob/main/LICENSE" target="_blank">GPL3</a>  
 
