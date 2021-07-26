@@ -8,7 +8,7 @@ setwd("Your/directory")
 
 
 # read your spatial polygon (don't use extension in name of polygon (e.g., .shp))
-poly <- readOGR(dsn = ".", layer = "name_of_polygon") 
+poly <- readOGR(dsn = ".", layer = "name_of_polygon")
 
 
 # read the raster layer to have basic features for later
@@ -16,27 +16,30 @@ poly <- readOGR(dsn = ".", layer = "name_of_polygon")
 raster_file <- "base_layer.tif"
 
 ## creating raster (make sure projections (polygon and raster) are compatible)
-raster_layer <- raster(raster_file) 
+raster_layer <- raster(raster_file)
 
 
 # create raster from polygons
 ## functions documentation, see details to understand the process
 help(rasterize)
 
+## list the fields you have in your shapefile
+colnames(poly@data)
+
 ## cattle
-rp_catt <- rasterize(poly, raster_layer, field = "Den_Catt", mask = FALSE, 
+rp_catt <- rasterize(poly, raster_layer, field = "Den_Catt", mask = FALSE,
                      update = FALSE, updateValue = 'all')
 
 ## buffalo
-rp_buff <- rasterize(poly, raster_layer, field = "Den_Buffal", mask = FALSE, 
+rp_buff <- rasterize(poly, raster_layer, field = "Den_Buffal", mask = FALSE,
                      update = FALSE, updateValue = 'all')
 
 ## sheep
-rp_shee <- rasterize(poly, raster_layer, field = "Den_Sheep", mask = FALSE, 
+rp_shee <- rasterize(poly, raster_layer, field = "Den_Sheep", mask = FALSE,
                      update = FALSE, updateValue = 'all')
 
 ## goat
-rp_goat <- rasterize(poly, raster_layer, field = "Den_Goat", mask = FALSE, 
+rp_goat <- rasterize(poly, raster_layer, field = "Den_Goat", mask = FALSE,
                      update = FALSE, updateValue = 'all')
 
 
