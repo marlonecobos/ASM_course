@@ -27,15 +27,15 @@ help(kuenm_rpca)
 
 ## preparing function's arguments
 var_folder <- "folder_with_layers" # name of folder with variables to be used
-in_format <- "GTiff" # other options available are "ascii" and "EHdr" = bil 
+in_format <- "GTiff" # other options available are "ascii" and "EHdr" = bil
 scalev <- TRUE # scale variables
 writer <- TRUE # save results
 out_format <- "GTiff" # other options available are "ascii" and "EHdr" = bil
-out_folder <- "PCA_results" # name of folder that will contain the sets 
+out_folder <- "PCA_results" # name of folder that will contain the sets
 n_pcs <- 6 # number of pcs you want as rasters, if not defined all pcs are returned as rasters
 
 
 ## runing PCA
-kuenm_rpca(variables = variables, in.format = in_format, var.scale = scalev, 
+kuenm_rpca(variables = var_folder, in.format = in_format, var.scale = scalev,
            write.result = writer, out.format = out_format, out.dir = out_folder,
            n.pcs = n_pcs)
