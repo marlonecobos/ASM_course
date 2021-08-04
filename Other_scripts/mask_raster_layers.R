@@ -6,16 +6,16 @@ library(rgdal)
 # defined your directory
 setwd("YOUR/DIRECTORY")
 
-# listing the files you want to mask (place them in subfolder so it is easier to 
+# listing the files you want to mask (place them in subfolder so it is easier to
 # find them) in my case the folder is "test_folder" (change it accordingly)
-list_files <- list.files(path = "test_folder", pattern = ".tif$", 
+list_files <- list.files(path = "test_folder", pattern = ".tif$",
                          full.names = TRUE)
 
 # now lets create a stak of all raster layers
 list_rasters <- stack(list_files)
 
 
-# read you maks layer
+# read you mask layer
 ## use this if your mask is a raster layer (change name of layer accordingly)
 mask_raster <- raster("base_layer.tif")
 
